@@ -1,0 +1,72 @@
+---
+title: "Bayes Theorem"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-03-29"
+output: html_document
+---
+```{r}
+titanic=read.csv("titanic.csv")
+titanic=titanic[, -3]
+
+```
+
+###post-terium prob
+```{r}
+table=table(titanic$Survived)
+prop.table(table)
+```
+###Bayes
+
+
+```{r}
+table(titanic$Sex)
+table1=table(Survived= titanic$Survived, 
+            Gender = titanic$Sex)
+table1
+addmargins(table1)
+```
+
+
+
+```{r}
+prob_M_given_S = 109/342
+prob_M_given_S
+prob_F_given_S = 1-prob_M_given_S
+prob_F_given_S
+```
+
+
+
+```{r}
+prob_M_given_D = 464/545
+prob_M_given_D
+prob_F_given_D = 1-prob_M_given_S
+prob_F_given_D
+
+```
+
+```{r}
+## Bayes Theorem/Using posterior prob to find prior probability
+Prob_M_and_S = 0.39*0.32
+Prob_M_and_D = 0.61*0.85
+Prob_M = Prob_M_and_S + Prob_M_and_D
+Prob_M
+prob_S_given_M= Prob_M_and_S/Prob_M
+prob_S_given_M
+
+Prob_F_and_S = 0.39*0.68
+Prob_F_and_D = 0.61*0.15
+Prob_F = Prob_F_and_S + Prob_F_and_D
+Prob_F
+prob_S_given_F= Prob_F_and_S/Prob_F
+prob_S_given_F
+
+```
+
+```{r}
+## Bayes theorem for classfication 
+#install.packages("e1071")
+library("e1071")
+
+```
+

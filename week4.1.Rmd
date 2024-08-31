@@ -1,0 +1,75 @@
+---
+title: "week4.1"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-05"
+output: html_document
+---
+```{r}
+library(ggplot2)
+```
+```{r}
+births14= read.csv("births14.csv")
+births14= na.omit(births14)
+births14
+```
+###scatter plot
+
+```{r}
+ggplot(births14, aes(x=gained, y=weight)) + geom_point(col="pink", size=3, shape=23, fill="green")+ labs(x="Weight gained by mothers at pregrancny", y="birth weifgt of babies") + ggtitle("Relationship between birth weight of baby and weight gained by mother")
+
+```
+
+
+#### Box plots of weight vs marital
+```{r}
+ggplot(births14, aes(x=marital, y=weight)) + geom_boxplot(col=c('red', 'green'),fill=c('pink','brown'))
+```
+
+```{r}
+ggplot(births14, aes(x=sex, y=weight)) + geom_boxplot(col=c('red', 'green'),fill=c('pink','brown'))
+```
+
+
+```{r}
+ggplot(births14, aes(x=habit, y=weight)) + geom_boxplot(col=c('red', 'green'),fill=c('pink','brown'))
+```
+
+### histogram
+
+```{r}
+ggplot(births14, aes(x=weight))+ geom_histogram(bins=20, col="brown", fill="yellow")
+```
+
+### summarizing categorical variables, frequency table
+
+```{r}
+table(births14$sex)
+```
+
+```{r}
+table(births14$habit)
+```
+```{r}
+table(births14$marital)
+```
+### doint it to two or more
+
+```{r}
+table(births14$sex, births14$habit)
+```
+###adding margins, cummulating
+```{r}
+addmargins(table(births14$sex, births14$habit))
+```
+
+##proportions..,,, reative frequency tables
+```{r}
+prop.table(table(births14$sex, births14$habit))
+```
+
+## Bar plots ..., ###dodge for side by side
+
+```{r}
+ggplot(births14, aes(x=sex, fill=habit)) + geom_bar(position="dodge")
+```
+

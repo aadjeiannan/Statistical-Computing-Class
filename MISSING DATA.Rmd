@@ -1,0 +1,40 @@
+---
+title: "Missing Data"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-01"
+output: html_document
+---
+
+```{r}
+library(mice)
+data=nhanes
+
+
+sum(is.na(data$age))/25
+sum(is.na(data$bmi))/25
+sum(is.na(data$hyp))/25
+sum(is.na(data$chl))/25
+
+dim(data)
+
+
+
+#you cannot ignore missing data when the value of missing observation is mire than 10%
+```
+
+
+```{r}
+data$hyp=
+```
+
+#using the mice function the default for m is 5, method talks about what type method to use for each variable
+```{r}
+pred_mice=mice(data, m=5, method=c("", "mean", "logreg", "mean"))
+```
+
+
+```{r}
+complete_data1=complete(pred_mice, m=1)
+head(complete_data1)
+```
+

@@ -1,0 +1,87 @@
+---
+title: "Worksheet8 personal"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-03-04"
+output: html_document
+---
+
+
+###Confidence Intervals for Slope 
+```{r}
+calc_slope_intercept_ci <- function(x, y, confidence_level = 0.95) {
+  n <- length(x)
+  x_bar <- mean(x)
+  y_bar <- mean(y)
+  s_xx <- sum((x - x_bar)^2)
+  s_xy <- sum((x - x_bar) * (y - y_bar))
+  b_1 <- s_xy / s_xx
+  b_0 <- y_bar - b_1 * x_bar
+  
+  sse <- sum((y - b_0 - b_1 * x)^2)
+  mse <- sse / (n - 2)
+  
+  se_b_1 <- sqrt(mse / s_xx)
+  se_b_0 <- sqrt(mse * (1/n + (x_bar^2 / s_xx)))
+  
+  t_value <- qt((1 + confidence_level) / 2, df = n - 2)
+  
+  b_1_ci <- c(b_1 - t_value * se_b_1, b_1 + t_value * se_b_1)
+  b_0_ci <- c(b_0 - t_value * se_b_0, b_0 + t_value * se_b_0)
+  
+  list(b_1_ci = b_1_ci, b_0_ci = b_0_ci)
+}
+
+```
+
+
+####Confidence Interval for Mean Response
+```{r}
+calc_mean_response_ci <- function(x, new_x, y, confidence_level = 0.95) {
+  n <- length(x)
+  x_bar <- mean(x)
+  y_bar <- mean(y)
+  s_xx <- sum((x - x_bar)^2)
+  s_xy <- sum((x - x_bar) * (y - y_bar))
+  b_1 <- s_xy / s_xx
+  b_0 <- y_bar - b_1 * x_bar
+  
+  sse <- sum((y - b_0 - b_1 * x)^2)
+  mse <- sse / (n - 2)
+  
+  se_prediction <- sqrt(mse * (1 + 1/n + (new_x - x_bar)^2 / s_xx))
+  
+  t_value <- qt((1 + confidence_level) / 2, df = n - 2)
+  
+  mean_response_ci <- c((b_0 + b_1 * new_x) - t_value * se_prediction, (b_0 + b_1 * new_x) + t_value * se_prediction)
+  
+  mean_response_ci
+}
+
+```
+
+
+#####Prediction Interval for New Observations
+```{r}
+calc_prediction_interval <- function(x, new_x, y, confidence_level = 0.95) {
+  n <- length(x)
+  x_bar <- mean(x)
+  y_bar <- mean(y)
+  s_xx <- sum((x - x_bar)^2)
+  s_xy <- sum((x - x_bar) * (y - y_bar))
+  b_1 <- s_xy / s_xx
+  b_0 <- y_bar - b_1 * x_bar
+  
+  sse <- sum((y - b_0 - b_1 * x)^2)
+  mse <- sse / (n - 2)
+  
+  se_forecast <- sqrt(mse * (1 + 1/n + (new_x - x_bar)^2 / s_xx))
+  
+  t_value <- qt((1 + confidence_level) / 2, df = n - 2)
+  
+  prediction_interval <- c((b_0 + b_1 * new_x) - t_value * se_forecast, (b_0 + b_1 * new_x) + t_value * se_forecast)
+  
+  prediction_interval
+}
+
+```
+

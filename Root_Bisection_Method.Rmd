@@ -1,0 +1,96 @@
+---
+title: "Bisection_Method"
+author: "Math 5530-4530-Spring 2024"
+date: "2024-04-10"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+### Bisection method
+
+```{r}
+bisection=function(ftn, x.l,x.r,tol=0.0001){
+  # check inputs
+ if (x.l >= x.r) {
+ cat("error: left point is greater than the right point \n")
+ return(NULL)
+ }
+  f.l=ftn(x.l)
+  f.r=ftn(x.r)
+  if(f.l==0){
+    return(x.l)
+  }else if(f.r==0){
+    return(x.r)
+  }else if (f.l * f.r > 0) {
+ cat("error: two points you have entered are on the same side of the root. \n")
+ return(NULL)
+  }
+   # Refine the left and right points successively
+ iter = 0
+ while((x.r-x.l)>tol){
+   x.m=(x.l+x.r)/2
+   f.m=ftn(x.m)
+   if(f.m==0){
+     return(x.m)
+   }else if(f.l*f.m<0){
+     x.r=x.m
+     f.r=f.m
+   }else{
+     x.l=x.m
+     f.l=f.m
+   }
+    iter=iter+1
+ cat("At iteration", iter, "left point is", x.l,  "right point is", x.r, "\n")
+ }
+   # return (approximate) root
+ root= (x.l + x.r)/2
+ cat("One root of the function is ",root)
+ return(root)
+}
+
+```
+
+
+
+#### Lets find the roots of $x^3-x-3$
+
+```{r}
+my_function=function(x){
+  x^3-x-3
+}
+```
+
+
+### Lets plot the function first
+
+```{r}
+x=seq(-5,5,0.001)
+y=my_function(x)
+plot(x,y,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="")
+xlabel=seq(-5,5,2)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-150,150,50)
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+```
+
+
+####  Lets apply the bisection rule
+
+
+
+```{r}
+bisection(my_function,1,0)
+bisection(my_function,0,1)
+bisection(my_function,1,2)
+bisection(my_function,1,4)
+
+```
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+---
+title: "Lab 7"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-06"
+output: html_document
+---
+
+```{r}
+my_pnorm = function(x, u, s) {
+  # Defining the density function
+  dens = function(x, u, s) {
+    y = (1 / (s * sqrt(2 * pi)) * exp(-((x - u)^2) / (2 * s^2)))
+    return(y)
+  }
+
+  # Defining the right Riemann sum,  Midpoint reimann sum functions and  computing the area under the curve of the normal distribution to the left of x function
+  right_riemann = function(ftn, a, b, n) {
+    h = (b - a) / n
+    x = seq(a + h, b, by = h)
+    fx = ftn(x, u, s)  
+    sum_area = sum(fx) * h
+    return(sum_area)
+  }
+
+  midpoint = function(ftn, a, b, n) {
+    h = (b - a) / n
+    x = seq(a, b - h, by = h)  
+    mid_sum = 0
+    for (i in 1:length(x)) {
+      m = x[i] + h / 2  
+      mid_sum = mid_sum + ftn(m, u, s) * h  
+    }
+    return(mid_sum)
+  }
+
+  cdf1 = right_riemann(dens, -1000, x, n = 100000)
+  cdf2 = midpoint(dens, -1000, x, n = 100000)
+  results = c(cdf1, cdf2)
+  return(results)
+}
+```
+
+
+
+#confirming the results
+```{r}
+# Confirming the results
+right_reiman = my_pnorm(3, 5, 2.5)[1]
+mid_reiman = my_pnorm(3, 5, 2.5)[2]
+
+# Printing the results using the defined function
+print(right_reiman)
+print(mid_reiman)
+
+# Also, the result of pnorm for comparison is given as follows
+print(pnorm(3, 5, 2.5))
+
+```
+
+
+```{r}
+# Confirming the results
+right_reiman = my_pnorm(4, 10, 3.4)[1]
+mid_reiman = my_pnorm(4, 10, 3.4)[2]
+# Printing the results using the defined function
+print(right_reiman)
+print(mid_reiman)
+
+# Also, the result of pnorm for comparison is given as follows
+print(pnorm(4, 10, 3.4))
+```
+

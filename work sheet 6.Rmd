@@ -1,0 +1,191 @@
+---
+title: "work sheet 6"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-21"
+output: html_document
+---
+#### by theoretical
+#### Part(a)
+```{r}
+n=24
+top=seq(365-(n-1), 365)
+top
+prob= 1- prod((top)/365^n)
+prob
+```
+
+### by simulations
+### Part(a)
+
+```{r}
+days= 1:365
+n=24
+bdays=sample(days,n,replace = TRUE)
+any(duplicated(bdays))
+```
+###part (b)
+```{r}
+same_birthdays=function(n=24){
+  days= 1:365
+bdays=sample(days,n,replace = TRUE)
+any(duplicated(bdays))
+}
+#same_birthdays()
+N=100000
+result=replicate(N, same_birthdays())
+mean(result)
+```
+
+###Part (c)
+
+```{r}
+compute_probability=function(N, n){
+  result=replicate(N, same_birthdays())
+mean(result)
+}
+
+```
+
+```{r}
+compute_probability(N=1000000, n=24)
+```
+
+###part d
+
+```{r}
+probs=vector()
+#i number of people
+N=1000000
+for (i in 1:60){
+  result = replicate(N,same_birthdays(i))
+  probs[i]=mean(result)
+}
+
+grid=1:60
+plot(grid, probs, type="l")
+```
+
+##Problem 2
+
+#### Theoretical answer
+## p(x>=4)
+### part(a)
+
+```{r}
+1 -pbinom(3, 7, 0.60)
+```
+
+```{r}
+play=sample(c(1,0), 7, replace= TRUE, prob = c(0.6,0.4))
+play
+A_wins=sum(play)
+A_wins
+```
+
+
+```{r}
+win_4_times=function(){
+  play=sample(c(1,0), 7, replace= TRUE, prob = c(0.6,0.4))
+A_wins=sum(play)
+A_wins
+  if(A_wins>=4){
+    result=TRUE
+  }else{
+    result=FALSE
+  }
+return(result)
+}
+```
+
+
+```{r}
+win_4_times()
+```
+
+## simulate the game N times
+
+
+```{r}
+N=1000000
+out=replicate(N,win_4_times())
+mean(out)
+```
+
+
+
+#The function paste
+
+```{r}
+paste("red", c(1,2,3))
+```
+
+```{r}
+paste("red","green", c(1,2,3, 4))
+```
+```{r}
+col=c("red","green","blue")
+num=c(1:6)
+paste(col, num)
+```
+
+
+```{r}
+col=c("red","green","blue")
+num=c(1:6)
+expand.grid(col, num)
+```
+
+###Problem 3
+
+
+###Theoretical answer
+```{r}
+(4/52)*(12/51)*2
+```
+
+
+##simulation
+```{r}
+numbers=c("Ace","Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten","Jack", "Queen", "King")
+suites=c("Spades", "Club", "Diamond","Hearts")
+```
+
+
+```{r}
+deck=expand.grid((number=numbers, suit=suites))
+deck=paste(deck$number, deck$suit)
+```
+
+```{r}
+Ace_cards=paste("Ace", suits)
+Ace_cards
+```
+
+```{r}
+Face=c("Jack", "Queen", "King")
+Face=expand.grid(num=Face, Suit=Suites)
+```
+
+
+###shuffling
+```{r}
+x=1:6
+x
+shuffle=sample(x,6)
+y=[shuffle]
+```
+
+
+
+
+###Miscilleneous 
+
+```{r}
+x=c(2,3,4,5,6,6)
+duplicated(x)
+y=1:15
+duplicated(y)
+any(duplicated(x))
+any(duplicated(y))
+```
+

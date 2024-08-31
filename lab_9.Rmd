@@ -1,0 +1,118 @@
+---
+title: "Lab 9 updated"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-15"
+output: html_document
+---
+
+#### Find the minimum of $2x^4 + 20x^3 - 6x^2 + 15x - 30$
+```{r}
+
+my_func1 <- function(x){
+  fx = (2*x^4) + (20*x^3) - (6*x^2) + (15*x) - 30
+  return(fx)
+}
+
+```
+
+
+#### Golden Section Method for optimization (Minimum)
+
+```{r}
+golden_section=function(ftn, xl,xm,xr,tol=0.0000001){
+  ## Check for inputs
+  f.l=ftn(xl);
+  f.m=ftn(xm);
+  f.r=ftn(xr);
+  
+  
+  if(f.l<=f.m){
+    cat("error: f.l<=f.m \n")
+    return(NULL)
+  }
+  
+  if(f.r<=f.m){
+    cat("error:f.r<=f.m \n")
+    return(NULL)
+  }
+  # golden ratio plus one
+  gr1 <- 1 + (1 + sqrt(5))/2;
+  
+  while(xr-xl>tol){
+    if((xr-xm)>(xm-xl)){
+      y=xm+(xr-xm)/gr1
+      f.y=ftn(y)
+      if(f.y<=f.m){
+        xl=xm
+        xm=y
+        f.l=f.m
+        f.m=f.y
+      }else{
+        xr=y
+        xm=y
+        f.r=f.y
+      }
+    }else{
+      y=xm-(xm-xl)/gr1
+      f.y=ftn(y)
+      if(f.y<=f.m){
+        xr=xm
+        f.r=f.m
+        xm=y
+        f.m=f.y
+      }else{
+        xl=y
+        f.l=f.y
+      }
+    }
+  }
+  cat("The function has minimum value at",xm,"\n")
+  return(xm)
+}
+
+```
+
+
+```{r}
+golden_section(my_func1,4,2,5)
+```
+
+
+
+#### Lets make an array that stores the output of the function (y-values)
+```{r}
+my_func2=function(x){
+  y=vector()
+  for (i in 1:length(x)){
+      y[i]= my_func1(x[i])
+  }
+  return(y)
+}
+```
+
+
+
+
+#### Draw the graph of the function that helps to pick the possible 3 points
+```{r}
+x=seq(-5,5,0.001)
+y=my_func2(x)
+plot(x,y,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="",main="Graph of the function")
+
+xlabel=seq(-5,5,1)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-1,10,2)
+ylabel=ylabel[ylabel!=0]
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+
+
+```
+
+
+
+
+
+
+
+

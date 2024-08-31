@@ -1,0 +1,430 @@
+---
+title: "Titanic_Decision_Trees"
+author: "Math 5530/4530-Spring 2024"
+date: "2024-04-21"
+output: html_document
+---
+
+# Regression Tree on HorsePrice data
+
+### Load the data
+
+```{r}
+horseprice=read.csv("HorsePrices .csv")
+horseprice=na.omit(horseprice)
+horseprice=horseprice[,-c(1,2)] ## Remove first two columns
+head(horseprice)
+dim(horseprice)
+names(horseprice)
+plot(horseprice)
+```
+
+
+
+###  Load the necessary packages
+
+```{r}
+library(rpart)
+library(rpart.plot)
+library(tree)
+```
+
+
+#### Predict the horse price using Age and Height only.
+
+#### First use rpart()
+
+```{r}
+decision_tree_horse.price=rpart(Price~Age+Height, data=horseprice)
+summary(decision_tree_horse.price)
+rpart.plot(decision_tree_horse.price,col="red")
+```
+
+
+#### Next, use tree()
+
+
+```{r}
+tree.price=tree(Price~Age+Height, data=horseprice)
+summary(tree.price)
+plot(tree.price,col="red",lwd=2)
+text(tree.price,pretty=0,col="blue")
+```
+
+
+#### Regression Tree using all variables
+
+
+```{r}
+### tree for prediction
+tree.price1=tree(Price~., data=horseprice)
+summary(tree.price1)
+plot(tree.price1,col="red",lwd=2)
+text(tree.price1,pretty=0,col="blue")
+```
+
+
+```{r}
+### rpart for prediction
+tree.price2=rpart(Price~., data=horseprice)
+summary(tree.price2)
+rpart.plot(tree.price2,col="red",lwd=2)
+```
+
+
+
+### Classification Tree on titanic data
+
+#### Load the data
+
+
+```{r}
+titanic=read.csv("titanic.csv")
+names(titanic)
+titanic=titanic[,-3]
+names(titanic)
+sex=ifelse(titanic$Sex=="male",1,0)
+titanic$Sex=sex
+#plot(titanic)
+```
+
+```{r}
+#head(titanic)
+table(titanic$Survived)
+dim(titanic)
+```
+
+
+
+### train-test split
+
+```{r}
+set.seed(10)
+train=sample(887,0.7*887)
+train_data=titanic[train,]
+test_data=titanic[-train,]
+names(train_data)
+```
+
+
+
+### Use tree() for classification
+
+#### Using the three variables only
+
+```{r}
+titanic.tree=tree(as.factor(Survived)~Age+Pclass+Sex,data=train_data)
+summary(titanic.tree)
+plot(titanic.tree,col="red",lwd=2)
+text(titanic.tree,pretty=0.8,col="blue")
+#####
+tree.pred=predict(titanic.tree,test_data,type="class")
+cm1=table(tree.pred,test_data$Survived)
+cm1
+acc1=sum(diag(cm1))/sum(cm1)
+acc1
+```
+
+
+
+#### Using all the variables
+
+```{r}
+titanic.tree=tree(as.factor(Survived)~.,data=train_data)
+summary(titanic.tree)
+plot(titanic.tree,col="red",lwd=2)
+text(titanic.tree,pretty=0.8,col="blue")
+#####
+tree.pred=predict(titanic.tree,test_data,type="class")
+cm1=table(tree.pred,test_data$Survived)
+cm1
+acc1=sum(diag(cm1))/sum(cm1)
+acc1
+```
+
+
+
+
+###  Next, we consider whether pruning the tree might lead to improved results. The function cv.tree() performs cross-validation in order to cv.tree() determine the optimal level of tree complexity; cost complexity pruning is used in order to select a sequence of trees for consideration. We use the argument FUN = prune.misclass in order to indicate that we want the classification error rate to guide the cross-validation and pruning process,rather than the default for the cv.tree() function, which is deviance. The cv.tree() function reports the number of terminal nodes of each tree considered (size) as well as the corresponding error rate and the value of the cost-complexity parameter used K.
+
+
+```{r}
+set.seed(3)
+cv.titanic=cv.tree(titanic.tree,FUN=prune.misclass)
+names(cv.titanic)
+cv.titanic
+```
+
+
+#### Despite its name, dev corresponds to the number of cross-validation errors.The tree with 9 terminal nodes results in only 111 cross-validation errors. We plot the error rate as a function of both size and k.
+
+```{r}
+par(mfrow=c(1,2))
+plot(cv.titanic$size,cv.titanic$dev,type="b")
+plot(cv.titanic$k,cv.titanic$dev,type="b")
+```
+
+#### We now apply the prune.misclass() function in order to prune the tree to obtain the nine-node tree.
+
+
+```{r}
+prune.titanic=prune.misclass(titanic.tree,best=9)
+plot(prune.titanic,col="blue")
+text(prune.titanic,pretty=0,col="red")
+```
+
+
+####  How well does this pruned tree perform on the test data set? Once again,we apply the predict() function.
+
+
+```{r}
+tree.pred=predict(prune.titanic,newdata=test_data,type="class")
+cm2=table(tree.pred,test_data$Survived)
+sum(diag(cm2))/sum(cm2)
+```
+
+
+####  83.5% of the test observations are correctly classified.
+
+
+
+
+
+
+
+### Use rpart() for classification
+
+### Using a single variale gender
+
+```{r}
+gender_tree=rpart(Survived~Sex,data=train_data)
+prp(gender_tree,space=4,split.cex=2,nn.border.col = 2,border.col = 4)
+
+```
+
+
+### Using a single variale gender
+
+
+```{r}
+gender_tree=rpart(Survived~Pclass,data=train_data)
+prp(gender_tree,space=4,split.cex=2,nn.border.col = 2,border.col = 4)
+
+```
+
+
+
+### Using  Sex and  Pclass
+
+
+```{r}
+gender_tree=rpart(Survived~Pclass+Sex,data=train_data)
+prp(gender_tree,space=4,split.cex=2,nn.border.col = 2,border.col = 4)
+
+```
+
+
+
+```{r}
+gender_tree=rpart(Survived~Sex+Pclass,data=train_data)
+prp(gender_tree,space=4,split.cex=2,nn.border.col = 2,border.col = 3)
+
+```
+
+
+
+
+```{r}
+gender_tree=rpart(Survived~Sex+Pclass+Age,data=train_data)
+prp(gender_tree,space=4,split.cex=2,nn.border.col = 2,border.col = 4)
+
+```
+
+
+
+```{r}
+complex_tree=rpart(Survived~., data=train_data,cp=0.001)
+options(rep.plot.width=8,rep.plot.height=8)
+prp(complex_tree,type=1,space=4,split.cex=0.04,nn.border.col = 2)
+
+
+```
+
+
+
+```{r}
+library(ROCR)
+```
+
+
+
+
+```{r}
+complex_tree=rpart(Survived~., data=train_data,
+                  cp=0.001,   # complexity parameter
+                  maxdepth=5, # maximum tree depth
+                  minbucket=5,# min number of observations in leaf nodes
+                  method="class") # Classification
+options(rep.plot.width=8,rep.plot.height=8)
+prp(complex_tree,type=1,space=4,split.cex=1.2,nn.border.col = 2)
+prediction_r_part=predict(complex_tree,newdata =test_data,type="class" )
+cm=table(prediction_r_part,test_data$Survived)
+sum(diag(cm))/sum(cm)
+predictionr=predict(complex_tree,newdata =test_data,type="prob" )
+result=predictionr[,2]
+true.response=test_data$Survived
+pred=prediction(result,true.response)
+perf=performance(pred,"tpr","fpr")
+plot(perf,col="blue",main="ROC curve")
+abline(0,1)
+auc=performance(pred,"auc")
+auc@y.values
+```
+
+
+
+# Bagging and Random forest
+
+
+```{r}
+library(randomForest)
+```
+
+## Bagging
+
+#### Bagging is simply a special case of a random forest with m = p. Therefore, the randomForest() function can be used to perform both random forests and bagging.
+
+```{r}
+#dim(test_data)
+set.seed(1)
+rf_model.bag=randomForest(as.factor(Survived)~.,data=train_data,
+                      mtry=6,  # Number of branch variables
+                      ntree=1000, #Number of trees to grow 
+                      importance=TRUE)
+rf_model.bag
+```
+
+
+#### The argument mtry=6 indicates that all 3 predictors should be considered for each split of the tree—in other words,that bagging should be done.
+
+
+
+```{r}
+rf_predict.bag=predict(rf_model.bag,newdata=test_data,method="class")
+cm_rf.bag=table(rf_predict.bag,test_data$Survived)
+cm_rf.bag
+acc.bag=sum(diag(cm_rf.bag))/sum(cm_rf.bag)
+acc.bag
+
+```
+
+
+
+
+
+
+
+#### random Forest
+
+
+
+```{r}
+set.seed(1)
+rf_model=randomForest(as.factor(Survived)~.,data=train_data,method="class",
+                      mtry=3,     # Number of branch variables
+                      ntree=1000) # Number of trees to grow
+rf_model
+```
+
+
+#### The argument mtry=3 indicates that all 3 predictors should be considered for each split of the tree—in other words,that bagging should be done.
+
+
+
+#### Use this model to predict
+
+```{r}
+rf_predict=predict(rf_model,newdata=test_data,method="class")
+cm_rf=table(rf_predict,test_data$Survived)
+cm_rf
+acc=sum(diag(cm_rf))/sum(cm_rf)
+acc
+```
+
+
+
+```{r}
+predictionr=predict(rf_model,newdata =test_data,type="prob" )
+result=predictionr[,2]
+true.response=test_data$Survived
+pred=prediction(result,true.response)
+perf=performance(pred,"tpr","fpr")
+plot(perf,col="blue",main="ROC curve")
+abline(0,1)
+auc=performance(pred,"auc")
+auc@y.values
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Using the three variables only
+
+```{r}
+titanic.tree.rpart=rpart(as.factor(Survived)~Age+Pclass+Sex,data=train_data)
+summary(titanic.tree.rpart)
+rpart.plot(titanic.tree.rpart,col="red",lwd=2)
+#####
+tree.pred.rpart=predict(titanic.tree.rpart,test_data,type="class")
+cm2=table(tree.pred.rpart,test_data$Survived)
+cm2
+acc2=sum(diag(cm2))/sum(cm2)
+acc2
+```
+
+
+
+
+#### Using all the variables 
+
+```{r}
+titanic.tree.rpart=rpart(as.factor(Survived)~.,data=train_data)
+summary(titanic.tree.rpart)
+rpart.plot(titanic.tree.rpart,col="red",lwd=2)
+#####
+tree.pred.rpart=predict(titanic.tree.rpart,test_data,type="class")
+cm3=table(tree.pred.rpart,test_data$Survived)
+cm3
+acc3=sum(diag(cm3))/sum(cm3)
+acc3
+```
+
+
+
+
+
+
+
+
+```{r}
+#Bootstraping
+#Bootstrapping is constructed to reduce variance
+```
+
+
+```{r}
+x=c(2,5,7,8)
+n=length(x)
+sample1=sample(x, n, replace = TRUE)
+sample1
+```
+

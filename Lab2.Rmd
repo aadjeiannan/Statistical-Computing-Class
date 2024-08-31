@@ -1,0 +1,98 @@
+---
+title: "Lab 2"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-14"
+output: html_document
+---
+
+#Question 1
+```{r}
+convert_to_celsius = function(Fahrenheit) {
+  Celsius = numeric(length(Fahrenheit))
+  for (i in 1:length(Fahrenheit)) {
+    Celsius[i] = (5/9) * (Fahrenheit[i] - 32)
+  }
+  return(Celsius)
+}
+
+F = c(37, 39, 46, 56, 66, 76, 82, 79, 72, 62, 51, 42)
+C = convert_to_celsius(F)
+df = data.frame(Fahrenheit = F, Celsius = C)
+df
+
+```
+
+
+#Question 2
+```{r}
+My_sum = function(x) {
+  sum=0
+  for (i in 1:length(x)) {
+    sum = sum + x[i]
+  }
+  return(sum)
+}
+
+x = c(2, 4, 6, 8)
+My_sum(x)
+
+```
+
+#Question 3
+```{r}
+product = function(y) {
+  product= 1
+  for (i in 1:length(y)) {
+    product = product * y[i]
+  }
+  return(product)
+}
+
+product(x)
+
+
+```
+###Question 4
+
+```{r}
+Product1 = function(n) {
+  integer = 1
+  for (i in 1:n) {
+    integer = integer * i
+  }
+  return(integer)
+}
+
+n = 15
+Product1(n)
+
+
+```
+
+
+#Question 5
+
+```{r}
+
+sample_means_plot = function(population, N) {
+  
+  sample_means = numeric(N)
+  
+  
+  for (n in 1:N) {
+    
+    sample = sample(population, n, replace = TRUE)
+
+    sample_means[n] = mean(sample)
+  }
+  
+  plot(1:N, sample_means, type = "l", xlab = "Sample Size", ylab = "Sample Mean",
+       main = "The Weak Law of Large Numbers", col="gold")
+}
+
+population = rnorm(250000, mean = 50, sd = 10)
+sample_means_plot(population, N = 2500)
+
+```
+
+

@@ -1,0 +1,159 @@
+---
+title: "Project 1"
+author: "Mbye Sallah"
+date: "2024-03-07"
+output: html_document
+---
+
+### Problem (1)
+```{r}
+count_a_six <- function(n){
+  dice = 1:6
+  num_six = 0
+  probs = vector()
+  for (i in 1:n){
+    roll = sample(dice, 1)
+    if (roll == 6){
+      num_six = num_six + 1
+    }
+    prob = num_six / i
+    probs[i] = prob
+  }
+  plot(1:n, probs, type = "l",
+       xlab = "number of rolls",
+       ylab = "probabilities",
+       main = "Probabilites of Getting a Six")
+}
+
+count_a_six(100000)
+
+```
+
+# Problem (2)
+```{r}
+# create a deck of card
+Ace_Clubs_Wins <- function(){
+  suits = c("Diamonds", "Hearts", "Spades", "Clubs")
+  numbers = c("Ace", "Deuce", "Three",  "Four",
+               "Five", "Six", "Seven","Eight", "Nine",
+               "Ten", "Jack", "Queen", "King")
+  deck = expand.grid(suit = suits, number = numbers)
+  deck = paste(deck$number, deck$suit)
+  shuffle_deck = sample(deck, 52)
+  
+  # Red Cards
+  # The red cards are evenly divided between the hearts and diamonds suits, with 13 red cards in each suit
+  hearts_diamonds = c("Hearts", "Diamonds")
+  red_cards = expand.grid(number=numbers, suit=hearts_diamonds)
+  red_cards = paste(red_cards$number, red_cards$suit)
+  
+  # spade cards
+  spade_cards = paste(numbers, "Spades")
+  
+  # Club Cards
+  club_cards = paste(numbers, "Clubs")
+  
+  # Draw one card
+  hand = sample(shuffle_deck, 1)
+  if(hand %in% red_cards){
+    win = 0
+  }else if(hand %in% spade_cards){
+    win = 5
+  }else if(hand %in% club_cards & hand != "Ace Clubs"){
+    win = 10
+  }else if(hand == "Ace Clubs"){
+    win = 30
+  }
+  return(win)
+}
+
+## Simulate the game
+N = 100000
+output <- replicate(N, Ace_Clubs_Wins())
+Average_Money_won <- mean(output)
+Average_Money_won  
+```
+
+
+### Problem (3)
+#### Part (a)
+```{r}
+# Part (a)
+Roll_Two_Dice <- function(){
+  # Roll the dice for the first time
+  die1 = sample(1:6, 1)
+  die2 = sample(1:6, 1)
+  # Check if sum of the dice is either 2, 3, or 12
+  if ((die1 + die2) == 2 |(die1 + die2) == 3 | (die1 + die2) == 12 ){
+    result = "FALSE"
+  } else if ((die1 + die2) == 7 | (die1 + die2) == 11 ) { ## check if the sum is 7 or 11
+    result = "TRUE"
+  } else {
+    # Toss the dice again until you get the desired values
+    repeat{
+      die1_again = sample(1:6, 1)
+      die2_again = sample(1:6, 1)
+      if (((die1_again + die2_again) ==  die1 + die2) | (die1_again + die2_again == 7)){
+        break
+      }
+    }
+    if (die1_again + die2_again == 7){
+      result = "FALSE"
+    } else if ((die1_again + die2_again) ==  (die1 + die2)){
+      result = "TRUE"
+    }
+  }
+  return(result)
+}
+  
+Roll_Two_Dice()
+
+```
+
+#### Part (b)
+```{r}
+N <- 100000
+outcome <- replicate(N, Roll_Two_Dice())
+prop <- sum(outcome == "TRUE") / N
+prop
+```
+
+### Problem (4)
+#### Part (a)
+```{r}
+Amount_Earned <- function(){
+  num_heads = 0
+  num_tails = 0
+  repeat{
+    flip_coin = sample(c("Head", "Tail"), 1)
+    if (flip_coin == "Head"){
+      num_heads = num_heads + 1
+    }else if(flip_coin == "Tail"){
+      num_tails = num_tails + 1
+    }
+    if ((num_heads - num_tails) == 4){
+      break
+    }
+  }
+  prize = 30
+  total_flip = num_heads + num_tails
+  cost = 2 * total_flip
+  net_prize = prize - cost
+  
+  return(net_prize)
+}
+```
+
+
+#### Part (b)
+```{r}
+N <- 100000
+outcome <- replicate(N, Amount_Earned())
+prop <- mean(outcome)
+prop
+```
+
+
+
+
+

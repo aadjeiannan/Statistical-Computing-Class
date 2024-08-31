@@ -1,0 +1,252 @@
+---
+title: "Lab5"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-03-25"
+output: html_document
+---
+
+```{r}
+library(readxl)
+diabetes2=read_excel("diabetes2.xlsx")
+diabetes2 = na.omit(diabetes2)
+
+
+```
+##Part 1
+###1
+```{r}
+dim(diabetes2)
+training_data=sample(1:768, 0.8*768) 
+training_data.diabetes2=diabetes2[training_data, ]
+dim(training_data.diabetes2)
+validation_data.diabetes2=diabetes2[-training_data, ]
+dim(validation_data.diabetes2)
+
+```
+
+##2
+```{r}
+
+model1= glm(Outcome ~ ., data = training_data.diabetes2, family = "binomial")
+summary(model1)
+
+```
+
+
+
+##3
+```{r}
+result=predict(model1,validation_data.diabetes2,type="response")
+result[1:20] 
+predicted_response=ifelse(result>0.5,1,0)
+predicted_response[1:20]
+
+
+```
+
+##4
+```{r}
+
+predicted_response = ifelse(predicted_response>0.5, 1, 0)
+addmargins(table(predicted_response))
+true_response = validation_data.diabetes2$Outcome
+true_response[1:20]
+cm=table(true_response, predicted_response) 
+
+ACC=sum(diag(cm))/sum(cm)
+ACC
+
+TPR = cm[2,2]/(cm[2,2]+cm[2,1])
+TPR
+
+TNR = cm[1,1]/(cm[1,1]+ cm[1,2])
+TNR
+
+FPR = cm[1, 2] / sum(cm[1, ])
+FPR
+```
+
+##Part II
+#1 70% data in train set, 30
+```{r}
+set.seed(120)
+training_data70=sample(1:768, 0.7*768) 
+training_data70.diabetes2=diabetes2[training_data70, ]
+dim(training_data70.diabetes2)
+validation_data30.diabetes2=diabetes2[-training_data70, ]
+dim(validation_data30.diabetes2)
+
+model70= glm(Outcome ~ ., data = training_data70.diabetes2, family = "binomial")
+summary(model70)
+
+result30=predict(model70,validation_data30.diabetes2, type="response")
+result30[1:20]
+predicted_response30=ifelse(result30>0.5,1,0)
+predicted_response30[1:20]
+addmargins(table(predicted_response30))
+true_response1 = validation_data30.diabetes2$Outcome
+true_response1[1:20]
+
+cm1=table(true_response1, predicted_response30) 
+
+ACC1=sum(diag(cm1))/sum(cm1)
+ACC1
+
+TPR1 = cm1[2,2]/(cm1[2,2]+cm1[2,1])
+TPR1
+
+TNR1 = cm1[1,1]/(cm1[1,1]+ cm1[1,2])
+TNR1
+
+FPR1 = cm1[1, 2] / sum(cm1[1, ])
+FPR1
+
+```
+
+
+
+#2 60% data in train set, 40
+```{r}
+set.seed(120)
+training_data60=sample(1:768, 0.60*768) 
+training_data60.diabetes2=diabetes2[training_data60, ]
+dim(training_data60.diabetes2)
+validation_data40.diabetes2=diabetes2[-training_data60, ]
+dim(validation_data40.diabetes2)
+
+model60= glm(Outcome ~ ., data = training_data60.diabetes2, family = "binomial")
+summary(model60)
+
+result40=predict(model60,validation_data40.diabetes2, type="response")
+result40[1:20]
+predicted_response40=ifelse(result40>0.5,1,0)
+predicted_response40[1:20]
+addmargins(table(predicted_response40))
+true_response2= validation_data40.diabetes2$Outcome
+true_response2[1:20]
+cm2=table(true_response2, predicted_response40) 
+
+ACC2=sum(diag(cm2))/sum(cm2)
+ACC2
+
+TPR2 = cm2[2,2]/(cm2[2,2]+cm2[2,1])
+TPR2
+
+TNR2 = cm2[1,1]/(cm2[1,1]+ cm2[1,2])
+TNR2
+
+FPR2 = cm2[1, 2] / sum(cm2[1, ])
+FPR2
+```
+
+
+#3 50% data in train set, 50
+```{r}
+set.seed(120)
+training_data50=sample(1:768, 0.50*768) 
+training_data50.diabetes2=diabetes2[training_data50, ]
+dim(training_data60.diabetes2)
+validation_data50.diabetes2=diabetes2[-training_data50, ]
+dim(validation_data50.diabetes2)
+
+model50= glm(Outcome ~ ., data = training_data50.diabetes2, family = "binomial")
+summary(model50)
+
+
+result50=predict(model50,validation_data50.diabetes2, type="response")
+result50[1:20] 
+predicted_response50=ifelse(result50>0.5,1,0)
+predicted_response50[1:20] 
+
+
+true_response3=validation_data50.diabetes2$Outcome
+true_response3[1:20]
+
+cm3=table(true_response3, predicted_response50)
+cm3
+
+ACC3=sum(diag(cm3))/sum(cm3)
+ACC3
+
+TPR3 = cm3[2, 2] / sum(cm3[2, ])
+TPR3
+
+TNR3 = cm3[1, 1] / sum(cm3[1, ])
+TNR3
+
+FPR3 = cm3[1, 2] / sum(cm3[1, ])
+FPR3
+```
+
+
+
+###Part III
+#1
+```{r}
+# From  the estimation, 70-30 train-test split is the best because it has the highest accuracy rate of 0.78 and a relatively low  false positive rate of 0.11. 
+```
+
+
+#2
+```{r}
+#Plotting a simple ROC curve (x-axis: fpr, y-axis: tpr)
+library(ROCR)
+pred=prediction(result,true_response)
+pred1=prediction(result30,true_response1)
+pred2=prediction(result40,true_response2)
+pred3=prediction(result50,true_response3)
+
+perf=performance(pred,"tpr","fpr")
+perf1=performance(pred1,"tpr","fpr")
+perf2=performance(pred2,"tpr","fpr")
+perf3=performance(pred3,"tpr","fpr")
+
+plot(perf, col = "green", main = "ROC Curve")
+plot(perf1, col = "red", add = TRUE)
+plot(perf2, col = "yellow", add = TRUE)
+plot(perf3, col = "blue", add = TRUE)
+legend("bottomright", legend = c("ROC 1", "ROC 2", "ROC 3", "ROC 4"), col = c("green", "red", "yellow", "blue"), lty = 1)
+abline(0,1,col="black",lwd=1)
+```
+```{r}
+#ROC curve with AUC (Area under the curve)
+
+pred=prediction(result,true_response)
+pred1=prediction(result30,true_response1)
+pred2=prediction(result40,true_response2)
+pred3=prediction(result50,true_response3)
+
+perf=performance(pred,"tpr","fpr")
+perf1=performance(pred1,"tpr","fpr")
+perf2=performance(pred2,"tpr","fpr")
+perf3=performance(pred3,"tpr","fpr")
+
+auc=performance(pred,"auc")
+auc1=performance(pred1,"auc")
+auc2=performance(pred2,"auc")
+auc3=performance(pred3,"auc")
+
+auc@y.values
+
+auc1@y.values
+
+auc2@y.values
+
+auc3@y.values
+```
+
+
+
+```{r}
+plot(perf, col = "red", main = "ROC Curve")
+plot(perf1, col = "black", add = TRUE)
+plot(perf2, col = "grey", add = TRUE)
+plot(perf3, col = "blue", add = TRUE)
+legend("bottomright", legend = c("AUC = 0.852", "AUC1 = 0.862", "AUC2 = 0.841", "AUC3 = 0.846"), col = c("red", "black", "grey", "blue"), lty = 1)
+abline(0,1,col="purple")
+```
+
+
+
+
+

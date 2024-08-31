@@ -1,0 +1,174 @@
+---
+title: "MATH 4530/5530 Project 1"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-03-03"
+output: html_document
+---
+
+###Problem 1
+
+```{r}
+count_a_six = function(n) {
+  # i. Rolling a six-sided die for 1:n times
+  rolls = sample(1:6, n, replace = TRUE)
+  
+  # ii. counting the number of sixies
+  sixes_count = numeric(n)
+  
+  count = 0
+  for (i in 1:n) {
+    if (rolls[i] == 6) {
+      count = count + 1
+    }
+    sixes_count[i] = count
+  }
+  
+  # iii. Probability of getting a six and storing it for all rolls
+  probabilities = sixes_count / (1:n)
+  
+  # iv. Plotting the probabilities and the number of rolls
+ return( plot(1:n, probabilities, type = "l", xlab = "Number of Rolls", ylab = "Probability of Rolling a Six",
+       main = "Number of Rolls and the Probability of Rolling a Six "))
+  
+  
+}
+
+# v. Applying the function for n = 100,000
+count_a_six(100000)
+
+
+```
+
+
+###Problem 2
+```{r}
+Ace_Clubs_Wins = function() {
+  # i. Manually create a deck of 52 cards 
+  ## with the following indexing  1-13: Hearts, 14-26: Diamonds, 27-39: Clubs, 40-52: Spades
+  # The Ace of clubs is 39
+  
+  deck = 1:52
+  
+  # ii. Drawing one card randomly
+  drawn_card = deck[floor(runif(1) * length(deck)) + 1]
+  
+  #iii. Determining the win based on card drawn
+  win = 0
+  if (drawn_card >= 27 && drawn_card <= 38) { 
+    win = 10
+  } else if (drawn_card == 39) { 
+    win = 30
+  } else if (drawn_card >= 40 && drawn_card <= 52) { 
+    win = 5
+  }
+  
+  return(win)
+}
+#iv. returning the amount of money that can be won in one game
+simulate_game = function(n) {
+  total_win = 0
+  for (i in 1:n) {
+    total_win = total_win + Ace_Clubs_Wins()
+  }
+  average_win = total_win / n
+  return(average_win)
+}
+
+# Applying the function for 100,000 simulations
+simulate_game(100000)
+
+```
+
+
+
+##Problem 3
+
+```{r}
+Roll_Two_Dice = function() {
+  # a. Writing the Roll_Two_Dice function
+  roll_die = function() {
+    return(sample(1:6, 1, replace = TRUE))
+  }
+  
+  
+  initial_roll = roll_die() + roll_die()
+  
+  if (initial_roll %in% c(7, 11)) {
+    return(TRUE)
+  } else if (initial_roll %in% c(2, 3, 12)) {
+    return(FALSE)
+  }
+  
+  while (TRUE) {
+    new_roll = roll_die() + roll_die()
+    if (new_roll == 7) {
+      return(FALSE)
+    } else if (new_roll == initial_roll) {
+      return(TRUE)
+    }
+  }
+}
+
+Simulate_Game = function(N) {
+  results = replicate(N, Roll_Two_Dice())
+  proportion_wins = mean(results)
+  return(proportion_wins)
+}
+
+# b. Applying the function for N = 100,000 simulations
+proportion_wins = Simulate_Game(100000)
+proportion_wins
+
+```
+
+
+
+##problem four
+```{r}
+# a. Writing a function that will return the amount to earn in 1 game.
+flip_coin_game = function() {
+  difference = 0  
+  flips = 0  
+  
+  
+  while (abs(difference) < 4) {
+    flips = flips + 1  
+    
+    
+    flip_result = ifelse(runif(1) < 0.5, 1, -1)
+    difference = difference + flip_result  
+  }
+  
+  earnings = 30 - (flips * 2)
+  return(earnings)
+}
+
+
+simulate_game = function(N) {
+  total_earnings = 0  
+  
+  for (i in 1:N) {
+    game_earnings = flip_coin_game()  
+    total_earnings = total_earnings + game_earnings  
+  }
+  
+  average_earnings = total_earnings / N
+  return(average_earnings)
+}
+
+#b. Simulating the game 100,000 times and finding the average earnings
+ 
+average_earnings_result = simulate_game(100000)
+average_earnings_result
+
+```
+
+
+
+
+
+
+
+
+
+

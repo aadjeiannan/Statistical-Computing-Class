@@ -1,0 +1,46 @@
+---
+title: "Fixed_Point_Iteration"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-08"
+output: html_document
+---
+
+#finding the root od $f(x)=x^3-x-3$
+
+#Define the function $g(x)=x^3-3$
+```{r}
+g1=function(x){
+  x^3-3
+}
+```
+
+
+###Fixed Point Iteration
+#We want to find the value of $x$ such that $x_{n+1}=g(x_n).$
+```{r}
+fixed_point=function(ftn,x0, tol, max.iter){
+  xold=x0
+  xnew=ftn(xold)
+  iter=1
+  while(abs(xnew-xold)>tol & (iter<max.iter)){
+    xold=xnew
+    xnew=ftn(xold)
+    iter=iter+1
+  }
+  if(abs(xnew-xold)>tol){
+    cat("There is a root", "\n")
+    cat("The root is", xnew, "\n")
+  }else{
+    cat("There is no root", "\n")
+    cat("Null", "\n")
+  } return(xnew)
+}
+```
+
+
+
+
+```{r}
+fixed_point()
+```
+

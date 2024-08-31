@@ -1,0 +1,157 @@
+---
+title: "Week 7.2"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-28"
+output: html_document
+---
+
+```{r}
+n=1000
+x=rnorm(n, 5, 3)
+sigma2=0.15
+sigma=sqrt(sigma2)
+eps=rnorm(n, 0,sigma )
+beta0=5
+beta1=-8
+y=beta0 + beta1*x+eps
+
+  #df=data.frame(x,y,eps)
+#df
+```
+
+
+
+```{r}
+plot(x, y, col="red", pch=3)
+```
+
+
+##part 2
+
+```{r}
+ss_xy=sum((x-mean(x))*(y-mean(y)))
+ss_xx=sum((x-mean(x))^2)
+beta1_hat= ss_xy/ss_xx
+beta1_hat
+bias.beta1=beta1-beta1_hat
+bias.beta1
+```
+
+```{r}
+beta0_hat=mean(y)-beta1_hat*mean(x)
+beta0_hat
+bias.beta0=beta0-beta0_hat
+bias.beta0
+
+```
+
+
+```{r}
+yhat=beta0_hat+beta1_hat*x
+residual=y-yhat
+SSE=sum(residual^2) ## square sume of errors
+
+sigma2_hat=SSE/(n-2)
+sigma2_hat
+sigma2
+
+bias.sigma2=sigma2 - sigma2_hat
+bias.sigma2
+
+```
+
+
+#### SST = SSR +SSE 
+#### SST is total variability in y
+#### SSR is the explained variablity by the model
+
+### SSE is the unexplained variability by the model
+
+
+```{r}
+SST=sum((y-mean(y))^2)
+SST
+SSR=sum((yhat-mean(y))^2)
+SSR
+SSE
+SSE+SSR
+SST
+
+
+```
+## Coefficient of deteermination
+
+```{r}
+R_2= 1-(SSE/SST)
+R_2
+```
+
+
+```{r}
+calculate_biases = function(n, beta0, beta1, sigma_2) {
+  beta0=beta0
+  beta1=beta1
+  sigma_2=sigma_2
+  n=n
+  x = rnorm(n, mean = 3, sd = 3)
+  eps = rnorm(n, mean = 0, sd = sqrt(sigma_2))
+  y = beta0 + beta1 * y + eps
+  
+  ss_xx = sum((x - mean(x))^2)
+  ss_xy = sum((x - mean(x)) * (y - mean(y)))
+  beta1_hat = ss_xy / ss_xx
+  beta0_hat = mean(y) - beta1_hat * mean(x)
+  yhat=beta0_hat+beta1_hat*x
+  SSE=sum((y-yhat)^2)
+  sigma_2_hat=SSE/(n-2)
+  bias.beta0=beta0- beta0_hat
+  bias.beta1=beta1-beta1_hat
+  bias.sigma2=sigma_2-sigma_2_hat
+  
+ result=(c(bias.beta0,bias.beta1, bias.sigma2))
+  return(result)
+}
+
+
+
+```
+
+
+
+```{r}
+calculate_biases(1000, 1,1.5,0.75)
+```
+
+
+##part 6
+```{r}
+options(scipen = )
+N=10000
+calculate_biases.out=list()
+for (i in 1:N){
+  calculate_biases.out[[i]]=calculate_biases(1000, 1,1.5,0.75)
+  
+}
+```
+
+
+
+###find the average bias
+
+```{r}
+out_beta0.out=vector()
+for(i in 1:n){
+out_beta0.bias[i]=bias.out[[i]][[1]]  
+}
+mean(out_beta0.bias)
+```
+
+
+```{r}
+out_beta0.out=vector()
+for(i in 1:n){
+out_sigma2.bias[i]=bias.out[[i]][[1]]  
+}
+mean(out_beta0.bias)
+```
+

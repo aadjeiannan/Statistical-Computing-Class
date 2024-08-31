@@ -1,0 +1,232 @@
+---
+title: "Area_Under_the_Curve"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-03"
+output: html_document
+---
+
+```{r}
+#continuatnous random variable
+#p(x)=f(x)--->density function
+#p(a<x<b)
+#partitions
+#Left riemannsum...calculkates one area of the partition
+#Right riemannsum..calculkates one area of the partition
+#midpoint rule
+```
+
+## Define the function
+```{r}
+my_func=function(x){
+  y=x^2
+  return(y)
+}
+my_func(2)
+```
+
+##Left Riemman
+# a, b limits... n is number of partitions.. h is width... N how many points to be generated in x
+```{r}
+left_Riemann=function(ftn, a, b, n){
+  h=(b-a)/n
+  x=seq(a,b,h)
+  N=length(x)
+  Lsum=0
+  for(i in 1:(N-1)){
+    Lsum=Lsum+h*ftn(x[i])
+  }
+  return(Lsum)
+}
+```
+
+
+#when the sample size increases it becomes a 
+```{r}
+left_Riemann(my_func, 0,2,10)
+left_Riemann(my_func, 0,2,100)
+left_Riemann(my_func, 0,2,1000)
+left_Riemann(my_func, 0,2,100000)
+```
+
+###right riemesum
+```{r}
+right_Riemann=function(ftn, a, b, n){
+  h=(b-a)/n
+  x=seq(a,b,h)
+  N=length(x)
+  Rsum=0
+  for(i in 2:N){
+    Rsum=Rsum+h*ftn(x[i])
+  }
+  return(Rsum)
+}
+```
+
+
+
+```{r}
+right_Riemann(my_func, 0,2,10)
+right_Riemann(my_func, 0,2,100)
+right_Riemann(my_func, 0,2,1000)
+right_Riemann(my_func, 0,2,100000)
+```
+
+#midpoint rule
+
+```{r}
+midpoint=function(ftn, a, b, n){
+  h=(b-a)/n
+  x=seq(a,b,h)
+  N=length(x)
+  Msum=0
+  for(i in 1:(N-1)){
+    m = x[i]
+    Msum=Msum+h*ftn(m)
+  }
+  return(Msum)
+
+}
+
+
+```
+
+
+
+
+
+```{r}
+midpoint(my_func, 0,2,10)
+midpoint(my_func, 0,2,100)
+midpoint(my_func, 0,2,1000)
+midpoint(my_func, 0,2,100000)
+```
+
+
+```{r}
+trapezoid_rule <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  tsum = 0
+  for (i in 1:(N-1)){
+    tsum <- tsum + (h/2) * (ftn(x[i]) + ftn(x[i+1]))
+  }
+  return(tsum)
+}
+
+```
+
+
+```{r}
+trapezoid_rule(my_func, 0, 2, 100)
+```
+
+
+
+```{r}
+dens <- function(x, u, s){
+  y = (1/s*sqrt(2*pi)) * exp^-((x-u)^2)/(2*s^2)
+  return(y)
+}
+```
+
+
+
+```{r}
+my_pnorm <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  tsum = 0
+  for (i in 1:(N-1)){
+    tsum <- tsum + (h/2) * (ftn(x[i]) + ftn(x[i+1]))
+  }
+  return(tsum)
+  
+}
+```
+
+
+
+```{r}
+my_pnorm(dens, 20, 30, 10)
+```
+
+
+
+
+```{r}
+simpson_rule=function(ftn,a,b,n){
+  h=(b-a)/n;
+  x=seq(a,b,h)
+  N=length(x)
+  simpson_sum=ftn(x[1])+ftn(x[N]) 
+  for (i in 2:(N-1)){
+    if(i%%2==0){
+      simpson_sum=simpson_sum+4*ftn(x[i]); 
+    }else{simpson_sum=simpson_sum+2*ftn(x[i])
+      
+    }
+  }
+  area=(h/3)*simpson_sum
+  return(area)
+}
+```
+
+
+
+```{r}
+simpson_rule(my_func,0,2,10)
+```
+
+
+## Exponential distribution
+```{r}
+
+exp_func=function(x, lambda){
+  y=lambda*exp(-lambda*x)
+  return(y)
+}
+```
+
+
+
+```{r}
+exp_func(5, 0.10)
+```
+
+
+
+##Simpson
+```{r}
+simpson_rule=function(ftn,a,b,n,lambda){
+  h=(b-a)/n;
+  x=seq(a,b,h)
+  N=length(x)
+  simpson_sum=ftn(x[1],lambda)+ftn(x[N],lambda) 
+  for (i in 2:(N-1)){
+    if(i%%2==0){
+      simpson_sum=simpson_sum+4*ftn(x[i],lambda); 
+    }else{simpson_sum=simpson_sum+2*ftn(x[i], lambda)
+      
+    }
+  }
+  area=(h/3)*simpson_sum
+  return(area)
+}
+```
+
+
+```{r}
+simpson_rule(exp_func,0,4,1000,2)
+```
+
+
+
+
+
+
+
+
+
+

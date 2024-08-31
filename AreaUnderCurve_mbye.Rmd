@@ -1,0 +1,118 @@
+---
+title: "Area Under the Curve"
+author: "Mbye Sallah"
+date: "2024-04-03"
+output: html_document
+---
+
+### We use riemainsum to calculate area under the curve
+
+### Lest Riemann Sum
+```{r}
+my_func <- function(x){
+  y = x^2
+  return(y)
+}
+my_func(2)
+```
+
+### Left Riemann  Sum       
+```{r}
+left_riemman <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  Lsum = 0
+  for (i in 1:(N-1)){
+    Lsum <- Lsum + h*ftn(x[i])
+  }
+  return(Lsum)
+}
+```
+
+```{r}
+left_riemman(my_func, 0, 2, 1000)
+```
+### Right riemann sum       
+```{r}
+right_riemman <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  Rsum = 0
+  for (i in 2:N){
+    Lsum <- Rsum + h*ftn(x[i])
+  }
+  return(Rsum)
+}
+```
+
+```{r}
+right_riemman(my_func, 0, 2, 100)
+```
+
+```{r}
+mid_point <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  msum = 0
+  for (i in 1:(N-1)){
+    m = (x[i] + x[i+1])/2
+    msum <- msum + h*ftn(m)
+  }
+  return(msum)
+}
+```
+
+
+```{r}
+mid_point(my_func, 0, 2, 100)
+```
+
+### Trapezoidal rule
+```{r}
+trapezoid_rule <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  tsum = 0
+  for (i in 1:(N-1)){
+    tsum <- tsum + (h/2) * (ftn(x[i]) + ftn(x[i+1]))
+  }
+  return(tsum)
+}
+
+```
+
+
+```{r}
+trapezoid_rule(my_func, 0, 2, 100)
+```
+
+### Write a function that immitate the pnorm
+```{r}
+dens <- function(x, u, s){
+  y = (1/s*sqrt(2*pi)) * exp^-((x-u)^2)/(2*s^2)
+  return(y)
+}
+```
+
+```{r}
+my_pnorm <- function(ftn, a, b, n){
+  h = (b - a) / n
+  x = seq(a, b, h)
+  N = length(x)
+  tsum = 0
+  for (i in 1:(N-1)){
+    tsum <- tsum + (h/2) * (ftn(x[i]) + ftn(x[i+1]))
+  }
+  return(tsum)
+  
+}
+```
+
+```{r}
+my_pnorm(dens, 20, 30, 10)
+```
+

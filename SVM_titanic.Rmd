@@ -1,0 +1,193 @@
+---
+title: "SVM_titanic"
+author: "Math 5530/4530"
+date: "2024-04-17"
+output:
+  html_document: default
+  word_document: default
+---
+
+
+#### Load the titanic data
+
+```{r}
+titanic=read.csv("titanic.csv")
+
+```
+
+#### Remove the variable "Name" from the data set
+
+```{r}
+titanic=titanic[,-3]
+dim(titanic)
+names(titanic)
+```
+
+
+#### Use indicator variable for the categorical vartiable Sex
+
+
+```{r}
+Sex=ifelse(titanic$Sex=="male",1,0)
+table(Sex)
+titanic$Sex=Sex
+table(titanic$Sex)
+```
+
+
+
+#### Test-train-split (20-80)
+
+
+```{r}
+set.seed(1) # It will fix the random number generation
+train=sample(887,0.8*887)
+train_data=titanic[train,]
+test_data=titanic[-train,]
+true.response=test_data$Survived
+```
+
+
+### Load the packages e1071 and ROCR
+
+```{r}
+library(e1071)
+library(ROCR)
+
+```
+
+
+#### Linear Kernel
+
+```{r}
+svm_linear=svm(Survived~., data=train_data, kernel="linear",cost=5,type="C-classification")
+summary(svm_linear)
+```
+
+### Lets construct confusion matrix
+
+```{r}
+ypred <-predict(svm_linear, test_data)
+cm=table(predict = ypred, truth=test_data$Survived)
+cm
+sum(diag(cm))/sum(cm)
+```
+
+
+### Roc curve
+
+#### In order to obtain the fitted values for a given SVM model fit, we use decision.values = TRUE when fitting svm(). Then the predict() function will output the fitted values.
+
+```{r}
+svm_linear1=svm(Survived~., data=train_data, kernel="linear",type="C-classification",cost=2,decision.values=TRUE)
+#summary(svm_linear1)
+fitted1 <-attributes(predict(svm_linear1, train_data, decision.values = TRUE))$decision.values
+#fitted[1:10]
+predicted_obj <-prediction(fitted1, train_data$Survived)
+perf <-performance(predicted_obj, "tpr", "fpr")
+plot(perf,col="red")
+abline(0,1,col="purple")
+auc=performance(predicted_obj,"auc" )
+auc@y.values
+legend(0.8,0.2,print("AUC=0.82"))
+```
+
+
+
+
+
+
+#### We can perform cross-validation using tune() to select the best choice of cost for an SVM with a linear kernel:
+
+```{r}
+set.seed(1)
+tune.out1 <-tune(svm,Survived~., data = train_data,kernel = "linear",ranges=(cost = c(0.1, 1,10,50)))
+summary(tune.out1)
+```
+
+
+### Radial kernel
+
+
+
+```{r}
+svm_radial=svm(Survived~., data=train_data, kernel="radial",cost=5,gamma=0.1,type="C-classification")
+summary(svm_radial)
+```
+
+
+### Lets construct confusion matrix
+
+```{r}
+ypred_r <-predict(svm_radial, test_data)
+cm.r=table(predict = ypred_r, truth=test_data$Survived)
+cm.r
+sum(diag(cm.r))/sum(cm.r)
+```
+
+
+
+### Roc curve
+
+#### In order to obtain the fitted values for a given SVM model fit, we use decision.values = TRUE when fitting svm(). Then the predict() function will output the fitted values.
+
+```{r}
+svm_radial=svm(Survived~., data=train_data, kernel="radial",type="C-classification",cost=5,gamma=0.1,decision.values=TRUE)
+#summary(svm_linear1)
+fitted.r <-attributes(predict(svm_radial, train_data, decision.values = TRUE))$decision.values
+#fitted[1:10]
+predicted_obj.r <-prediction(fitted.r, train_data$Survived)
+perf.r <-performance(predicted_obj.r, "tpr", "fpr")
+plot(perf.r,col="red")
+abline(0,1,col="purple")
+auc.r=performance(predicted_obj.r,"auc" )
+auc.r@y.values
+legend(0.8,0.2,print("AUC=0.88"))
+```
+
+
+
+#### We can perform cross-validation using tune() to select the best choice of cost for an SVM with a radial kernel:
+
+```{r}
+set.seed(1)
+tune.out2 <-tune(svm,Survived~., data = train_data,kernel = "radial",ranges=list(cost = c(0.1, 1,10,50),gamma=c(0.001,0.01,0.1,1,5,10)))
+summary(tune.out2)
+```
+
+
+
+#### Lets fit the model using the new parameter
+
+
+```{r}
+svm_radial1=svm(Survived~., data=train_data, kernel="radial",cost=10,gamma=0.1,type="C-classification")
+summary(svm_radial1)
+```
+
+
+
+### Lets construct confusion matrix
+
+```{r}
+ypred_r1 <-predict(svm_radial1, test_data)
+cm.r1=table(predict = ypred_r1, truth=test_data$Survived)
+cm.r1
+sum(diag(cm.r1))/sum(cm.r1)
+```
+
+
+
+```{r}
+svm_radial1=svm(Survived~., data=train_data, kernel="radial",type="C-classification",cost=10,gamma=0.1,decision.values=TRUE)
+#summary(svm_linear1)
+fitted.r1 <-attributes(predict(svm_radial1, train_data, decision.values = TRUE))$decision.values
+#fitted[1:10]
+predicted_obj.r1 <-prediction(fitted.r1, train_data$Survived)
+perf.r1 <-performance(predicted_obj.r1, "tpr", "fpr")
+plot(perf.r1,col="red")
+abline(0,1,col="purple")
+auc.r1=performance(predicted_obj.r1,"auc" )
+auc.r1@y.values
+legend(0.8,0.2,print("AUC=0.89"))
+```

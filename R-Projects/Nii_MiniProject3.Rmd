@@ -1,0 +1,251 @@
+---
+title: "Mini Project 3"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-12"
+output: html_document
+---
+
+#Problem 1
+#1. Do some descriptive statistics and data visualization to explore the variables in the data.
+```{r}
+
+
+library(ggplot2)
+
+insurance = read.csv("insurance.csv")
+
+insurance = na.omit(insurance)
+
+str(insurance)
+
+
+summary(insurance)
+
+# histograms for all numerical variables 
+hist(insurance$age, main="Age Distribution", xlab="Age")
+hist(insurance$bmi, main="BMI Distribution", xlab="BMI")
+hist(insurance$charges, main="Charges Distribution", xlab="Charges")
+
+# Boxplot for charges by region
+ggplot(insurance, aes(x=region, y=charges)) + geom_boxplot() + xlab("Region") + ylab("Charges") + ggtitle("Charges by Region")
+
+# Boxplot for charges by smoker status
+ggplot(insurance, aes(x=smoker, y=charges)) + geom_boxplot() + xlab("Smoker") + ylab("Charges") + ggtitle("Charges by Smoker Status")
+
+dim(insurance)
+head(insurance)
+names(insurance)
+```
+
+
+#2. Split the data into train-test data sets.
+```{r}
+set.seed(123) 
+dim(insurance)
+train_data= sample(1:1338, 0.7 * 1338)
+train_data.insurance = insurance[train_data, ]
+test_data.insurance = insurance[-train_data, ]
+
+```
+
+
+
+
+#3.Fit at least 3 different regression models to the train_data.insurance set using different features or different combinations of thge features
+
+```{r}
+# Model 1: Using age, bmi, and smoker as predictors
+model1 = lm(charges ~ age + bmi + smoker, data = train_data.insurance)
+
+# Model 2: Adding interaction between age and bmi
+model2 = lm(charges ~ age * bmi + smoker, data = train_data.insurance)
+
+# Model 3: Using all available variables and interactions
+model3 = lm(charges ~ . + age:bmi + age:smoker + bmi:smoker, data = train_data.insurance)
+
+```
+
+
+#4.Find MSE of each model by applying these models to train data set, and choose a model that has the smallest MSE
+```{r}
+ # Defining MSE
+calculate_mse = function(actual, predicted) {
+  mse = mean((actual - predicted) ^ 2, na.rm = TRUE)  
+  return(mse)
+}
+
+# Predict charges using each model on the test data
+predictions_model1 = predict(model1, newdata = test_data.insurance)
+predictions_model2 = predict(model2, newdata = test_data.insurance)
+predictions_model3 = predict(model3, newdata = test_data.insurance)
+
+# Calculate MSE for each model
+mse1 = calculate_mse(test_data.insurance$charges, predictions_model1)
+mse2 = calculate_mse(test_data.insurance$charges, predictions_model2)
+mse3 = calculate_mse(test_data.insurance$charges, predictions_model3)
+
+# Print MSEs
+print(c("MSE1" = mse1, "MSE2" = mse2, "MSE3" = mse3))
+
+# Find the model with the smallest MSE
+min_mse = min(mse1, mse2, mse3)
+best_model_indices = which(c(mse1, mse2, mse3) == min_mse)
+best_models = paste("Model", best_model_indices, collapse = ", ")
+best_mse = min_mse
+
+# Output the best model(s)
+cat("The best model(s) based on the smallest MSE is(are):", best_models, "with an MSE of:", best_mse, "\n")
+
+```
+
+
+
+#Problem 2
+#1. Do some descriptive statistics and data visualization to explore the variables in the data.
+```{r}
+# Load necessary libraries
+library(tidyverse)
+
+# Read the data
+heart_data = read.csv("heart.csv")
+
+# Display structure and summary of the data
+str(heart_data)
+summary(heart_data)
+
+# Create plots for variable distribution
+ggplot(heart_data, aes(x = factor(output))) + geom_bar() + labs(title = "Distribution of Heart Disease", x = "Heart Disease", y = "Count")
+names(heart_data)
+
+```
+
+
+#2 Split the data into train-test data sets.
+```{r}
+set.seed(123)
+dim(heart_data)
+train_indices = sample(1:303, 0.8 * 303)
+train_set = heart_data[train_indices, ]
+test_set = heart_data[-train_indices, ]
+
+dim(train_set) 
+dim(test_set)   
+
+```
+
+
+
+#3 Fit the 3 methods for classification we have studied: Logistic Regression Model,K-nearest neighbor classifier and Naive Bayes Classifier to the train dataset.
+```{r}
+# Logistic Regression
+library(stats)
+log_model = glm(output ~ ., family = binomial, data = train_set)
+summary(log_model)
+# K-Nearest Neighbors
+library(class)
+knn_model = knn(train = train_set[, -ncol(train_set)], test = test_set[, -ncol(train_set)], cl = train_set$output, k = 5)
+summary(knn_model)
+# Naive Bayes
+library(e1071)
+nb_model = naiveBayes(output ~ ., data = train_set)
+summary(nb_model)
+
+```
+
+
+
+
+#4 Apply the fitted methods to the train data set.
+```{r}
+# Logistic Regression predictions
+log_pred = predict(log_model, train_set, type = "response")
+log_pred_class = ifelse(log_pred > 0.5, 1, 0)
+
+# K-NN Predictions
+knn_pred = knn(train = train_set[, -ncol(train_set)], test = train_set[, -ncol(train_set)], cl = train_set$output, k = 5)
+
+# Naive Bayes predictions
+nb_pred = predict(nb_model, train_set)
+
+```
+
+
+
+#5 Find the following for each: TPR,TNR,FPR,FNR and Accuracy for each. For better perfor- mance, TPR, TNR,ACC should be high and FNR, FPR should be low.
+```{r}
+
+calculate_metrics = function(predictions, actual) {
+  if(length(predictions) != length(actual)) {
+    stop("Length of predictions does not match length of actual data")
+  }
+  cm = table(Predicted = predictions, Actual = actual)
+  tpr = cm[2,2] / (cm[2,2] + cm[2,1])
+  tnr = cm[1,1] / (cm[1,1] + cm[1,2])
+  fpr = cm[1,2] / (cm[1,1] + cm[1,2])
+  fnr = cm[2,1] / (cm[2,2] + cm[2,1])
+  acc = (cm[1,1] + cm[2,2]) / sum(cm)
+  return(c(TPR = tpr, TNR = tnr, FPR = fpr, FNR = fnr, ACC = acc))
+}
+
+# Computing metrics for each model
+log_metrics = calculate_metrics(log_pred_class, train_set$output)
+print("Logistic Regression Metrics:")
+print(log_metrics)
+
+
+knn_metrics = calculate_metrics(as.numeric(knn_pred) - 1, train_set$output)  # Ensure conversion and alignment
+print("K-Nearest Neighbors Metrics:")
+print(knn_metrics)
+
+nb_metrics = calculate_metrics(as.numeric(nb_pred), train_set$output)
+print("Naive Bayes Metrics:")
+print(nb_metrics)
+```
+#6. Draw a ROC Curves on the same plot.
+
+```{r}
+# Load the ROCR library
+library(ROCR)
+
+# Predictions for logistic regression
+log_pred_probs = predict(log_model, train_set, type = "response") 
+log_pred = prediction(log_pred_probs, train_set$output)
+
+# Predictions for K-Nearest Neighbors
+knn_pred_probs = as.numeric(knn_pred) - 1
+knn_pred = prediction(knn_pred_probs, train_set$output)
+
+# Predictions for Naive Bayes
+nb_pred_probs = predict(nb_model, train_set, type = "raw")[,2]
+nb_pred = prediction(nb_pred_probs, train_set$output)
+
+# Performance calculations for TPR and FPR
+log_perf = performance(log_pred, "tpr", "fpr")
+knn_perf = performance(knn_pred, "tpr", "fpr")
+nb_perf = performance(nb_pred, "tpr", "fpr")
+
+# Plotting the ROC curves
+plot(log_perf, col = "green", main = "ROC Curve", xlab = "False Positive Rate", ylab = "True Positive Rate")
+plot(knn_perf, col = "red", add = TRUE)
+plot(nb_perf, col = "blue", add = TRUE)
+legend("bottomright", legend = c("Logistic Regression", "K-NN", "Naive Bayes"), col = c("green", "red", "blue"), lty = 1)
+abline(0, 1, col = "black", lwd = 1)  # Adding a line of no discrimination
+
+```
+#7.Find the method that works best on this data set.
+
+```{r}
+
+#[1] "Logistic Regression Metrics:"
+ #     TPR       TNR       FPR       FNR       ACC 
+#0.8391608 0.8787879 0.1212121 0.1608392 0.8553719 
+#[1] "K-Nearest Neighbors Metrics:"
+ #     TPR       TNR       FPR       FNR       ACC 
+#0.7801418 0.7821782 0.2178218 0.2198582 0.7809917 
+#[1] "Naive Bayes Metrics:"
+ #     TPR       TNR       FPR       FNR       ACC 
+#0.8333333 0.8365385 0.1634615 0.1666667 0.8347107 
+
+# The logisitc regression method has the best performancw metrics. Among all the other methods, it has highest ACC TPR AND TNR. It also has the lowest FNR. Also, it has an ROC curve that is closer to 1, showing best performance. 
+```
+

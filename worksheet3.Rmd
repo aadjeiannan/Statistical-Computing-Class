@@ -1,0 +1,88 @@
+---
+title: "Worksheet 3"
+author: "Nii"
+date: "2024-01-31"
+output: html_document
+---
+
+```{r}
+#import
+library(tidyverse)
+library(nycflights13)
+```
+
+###part 4
+```{r}
+##creating new data
+flights_data= select(flights, 
+                     dep_time, dep_delay, arr_time, arr_delay)
+flights_data
+write.csv(flights_data, "flights_nyc.csv")
+```
+##part 5(a)
+
+```{r}
+Jan1=filter(flights, month==1&day==1 )
+Jan1
+```
+###part5(b)
+
+```{r}
+Jan1=filter(flights, month==1&day==1 )
+houston=filter(flights,dest=='IAH' |dest=='HOU')
+houston
+```
+
+#part5(c)
+
+```{r}
+Arrival_delay_G2hrs=filter(flights,arr_delay>=2 )
+Arrival_delay_G2hrs
+```
+##part 5(d)
+```{r}
+operated_by=filter(flights,carrier=="UA" | carrier=="AA" |carrier=="DA")
+operated_by
+```
+
+###part 5(e)
+```{r}
+departed_summer=filter(flights,month==7 | month==8 | month==9)
+departed_summer
+```
+
+###part 6(a)
+
+```{r}
+most_delayed_flights = arrange(flights, desc(arr_delay))
+most_delayed_flights
+```
+#part 6(b)
+```{r}
+ealierst_flights=  arrange(flights, dep_time)
+ealierst_flights
+```
+
+#part 6(c)
+```{r}
+fastest_flights=arrange(flights, desc(distance/air_time))
+fastest_flights
+```
+#6(d)
+```{r}
+farthest_flights=arrange(flights, desc(distance))
+farthest_flights
+```
+#6(e)
+```{r}
+shortest_flights=arrange(flights, distance)
+shortest_flights
+```
+
+#part(7)
+```{r}
+flights=flights%>%mutate(gain = dep_delay - arr_delay,hours = air_time/60, gain_per_hour = gain/hours)
+flights
+
+```
+

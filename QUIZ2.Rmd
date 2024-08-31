@@ -1,0 +1,92 @@
+---
+title: "QUIZ 2"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-07"
+output: html_document
+---
+```{r}
+library(ggplot2)
+```
+```{r}
+titanic= read.csv("titanic.csv")
+titanic= na.omit(titanic)
+titanic
+```
+
+
+###a. Calculate the frequency and relative frequency of survival for Titanic passengers
+```{r}
+
+table(titanic$Survived)
+prop.table(table(titanic$Survived))
+```
+###b. Calculate the frequency and relative frequency of passengers in each ticket class.
+```{r}
+table(titanic$Pclass)
+prop.table(table(titanic$Pclass))
+```
+
+#####c. Create a bar chart to display the number of passengers who survived and did not survive the Titanic sinking.
+```{r}
+ggplot(titanic, aes(x=Survived))+ geom_bar( col="brown", fill="yellow") + labs(title= "Survival Count Of Titanic Passenger", x = "Survived", y= "Passengers Onboard")
+```
+
+####d.Create a bar chart to display the percent of passengers who travelled under each ticket class.
+
+```{r}
+class_percent <- prop.table(table(titanic$Pclass)) * 100
+class_percent_df <- data.frame(Pclass = as.factor(names(class_percent)), Percentage = as.numeric(class_percent))
+ggplot(class_percent_df, aes(x = Pclass, y = Percentage)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Percentage of Passengers by Ticket Class",
+       x = "Ticket class",
+       y = "Percentage of Passengers") +
+  scale_x_discrete(labels = c("1st Class", "2nd Class", "3rd Class")) +
+  ylim(0, 100) +
+ theme_minimal()
+```
+
+#####e.Create a contingency table to show the joint distribution of survival and passenger ticket class.
+
+```{r}
+table(titanic$Survived, titanic$Pclass)
+```
+
+###f. Draw a side-by-side bar chart to show the number of passengers in each ticket class and who survived and did not survive. 
+
+```{r}
+titanic$Pclass = factor(titanic$Pclass)
+titanic$Survived =factor(titanic$Survived)
+ggplot(titanic, aes(x = Pclass, fill = Survived)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Passenger survival by Ticket Class",
+       x = "Ticket class",
+       y = "Number of passengers",
+       fill = "Survived") +
+  scale_fill_manual(values = c("yellow", "green"),
+                    labels = c("Not_survived", "Survived")) +
+ theme_minimal()
+```
+
+####Summarize your findings about survival on the Titanic and how a passenger’s ticket class might have affected his or her survival
+```{r}
+library(tidyverse)
+
+
+```
+
+####g.Summarize your findings about survival on the Titanic and how a passenger’s ticket class might have affected his or her survival
+```{r}
+
+
+survival_rate = titanic %>%
+  group_by(Pclass) %>%
+  summarize(survival_rate = mean(Survived == 1))
+
+survival_rate
+
+###From the data, passengers in 1st class has about 63% survival rate whereas passengers in the 3r class had the least surviving rate, which is about 25%. About half of passengers in the 2nd class had same surviving rate compared to the other half. 
+
+```
+
+

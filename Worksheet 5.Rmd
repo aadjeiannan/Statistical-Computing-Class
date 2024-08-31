@@ -1,0 +1,159 @@
+---
+title: "Worksheet 5"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-19"
+output: html_document
+---
+
+###part a
+```{r}
+die=1:6
+count_six=0
+for(i in 1:4){
+  
+roll=sample(die, 1)
+if (roll==6){
+  count_six=count_six+1
+}
+}
+if(count_six>=1){
+  cat("number of sixes is", count_six, "\n")
+  cat("You win", "\n")
+}else{
+  cat("You lose")
+}
+count_six
+```
+###part b
+```{r}
+sixes=function(n=4){
+  die=1:6
+count_six=0
+for(i in 1:n){
+  
+roll=sample(die, 1)
+if (roll==6){
+  count_six=count_six+1
+}
+}
+if(count_six>=1){
+  result="TRUE"
+}else{
+  result="FALSE"
+}
+return(result)
+  
+}
+sixes()
+
+```
+
+###part c
+###use replicate ### MONTE CARLO SIMULATION
+```{r}
+N=100
+Out=replicate(N, sixes())
+prop.table(table(Out))
+prob=sum(Out=="TRUE")/N
+prob
+```
+
+##Problem 2
+```{r}
+die=1:6
+count=0
+for(i in 1:60){
+  
+roll=sample(die, 1)
+if (roll==6){
+  count=count+1
+}
+}
+count
+```
+
+
+###nested loop for part 2
+```{r}
+N=1000
+die=1:6
+Out=vector()
+for (k in 1:N){
+
+count=0
+for(i in 1:60){
+  
+roll=sample(die, 1)
+if (roll==6){
+  count=count+1
+}
+  
+}
+Out[k]=count}
+mean(Out)
+```
+
+
+####Part 3 theoretical answer
+```{r}
+x=c(3, 8, 998,4998, -2 )
+p=c(100, 100, 5, 1, 8894)/1000
+mean=sum(x*p)
+mean
+```
+
+###simulation
+```{r}
+deck=rep(c(5,10, 1000,5000,0), c(1000,100, 5, 1, 8894))
+deck
+```
+
+###22
+```{r}
+
+num_simulations = 10000
+num_rolls = 60
+
+
+rolls = matrix(sample(1:6, num_simulations * num_rolls, replace = TRUE), ncol = num_rolls)
+
+
+num_sixes = rowSums(rolls == 6)
+
+
+mean_sixes = mean(num_sixes)
+mean_sixes
+
+```
+
+
+
+
+###3
+```{r}
+
+prize_amounts = c(rep(5, 1000), rep(10, 100), rep(1000, 5), rep(5000, 1))
+num_tickets = length(prize_amounts)
+
+
+num_simulations = 10000
+net_amounts = numeric(num_simulations)
+
+set.seed(123)  
+for (i in 1:num_simulations) {
+ 
+  tickets_drawn = sample(prize_amounts, num_tickets, replace = TRUE)
+  
+ 
+  net_amount = sum(tickets_drawn) - (2 * num_tickets)
+  
+ 
+  net_amounts[i] = net_amount
+}
+
+
+mean_net_amount = mean(net_amounts)
+mean_net_amount
+
+```
+

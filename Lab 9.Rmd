@@ -1,0 +1,85 @@
+---
+title: "Lab 9"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-15"
+output: html_document
+---
+
+
+```{r}
+
+
+library(ggplot2)
+
+ftn = function(x) {
+  2 * x^4 + 20 * x^3 - 6 * x^2 + 15 * x - 30
+}
+
+plot_function = function() {
+  x = seq(-10, 1, by = 0.01)
+  y = sapply(x, ftn)
+  df = data.frame(x, y)
+  
+  ggplot(df, aes(x, y)) +
+    geom_line(color = "blue") +
+    ggtitle("Graph of f(x) = 2x^4 + 20x^3 - 6x^2 + 15x - 30") +
+    xlab("x") + ylab("f(x)") +
+    theme_minimal()
+}
+
+
+golden_section = function(ftn, xl, xm, xr, tol = 1e-7) {
+ 
+  phi = (1 + sqrt(5)) / 2
+  
+
+  f.l = ftn(xl)
+  f.m = ftn(xm)
+  f.r = ftn(xr)
+
+  if (f.l < f.m || f.r < f.m) {
+    cat("Error: Middle point is not the lowest. Check your initial points.\n")
+    return(NULL)
+  }
+  
+  while (xr - xl > tol) {
+    if ((xr - xm) > (xm - xl)) {
+      xnew = xm + (xr - xm) / phi
+    } else {
+      xnew = xm - (xm - xl) / phi
+    }
+    f.new = ftn(xnew)
+
+    if (f.new < f.m) {
+      if (xnew > xm) {
+        xl = xm
+        xm = xnew
+      } else {
+        xr = xm
+        xm = xnew
+      }
+      f.m = f.new
+    } else {
+      if (xnew > xm) {
+        xr = xnew
+      } else {
+        xl = xnew
+      }
+    }
+  }
+  
+  cat("The function has a minimum value at x =", xm, "\n")
+  return(xm)
+}
+
+plot_function()
+
+xl = -10
+xm = -7.5
+xr = -5
+
+golden_section(ftn, xl, xm, xr)
+
+```
+
+

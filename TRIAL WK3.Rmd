@@ -1,0 +1,72 @@
+---
+title: "wk3_m"
+output: html_document
+date: "2024-01-29"
+---
+```{r}
+library(tidyverse)
+library(rmarkdown)
+births14=read.csv("births14.csv")
+subset1=select(births14,mage )
+names(births14)
+```
+```{r}
+subset2=select(births14, weight, sex, mature, mage, fage)
+subset2
+dim(subset2)
+str(subset2)
+```
+##exporting data
+##write.csv
+```{r}
+write.csv(subset2, file = "subset2.csv")
+```
+
+##dropping a variable using the minus sign
+```{r}
+subset3=select(births14, -fage, -mage, -sex)
+subset3
+dim(subset3)
+names(subset3)
+
+subset4=select(births14, starts_with("m"))
+head(subset4)
+dim(subset4)
+names(subset4)
+
+subset5=select(births14, ends_with("e"))
+head(subset5)
+names(subset5)
+```
+
+#filter #select male babies
+
+```{r}
+male.babies.data=filter(births14, sex=="male")
+male.babies.data
+dim(male.babies.data)
+```
+##select female babies
+```{r}
+female.babies.data=filter(births14, sex=="female")
+female.babies.data
+dim(female.babies.data)
+```
+###arrange
+```{r}
+subset6=arrange(births14,weight)
+head(subset6)
+
+subset6$weight[1:5]
+```
+##rename
+```{r}
+births14_renamed=rename(births14, births_weight=weight, maturity_mom=mature, premature=premie)
+names(births14_renamed)
+```
+
+#creating a new variable using the mutatate function
+```{r}
+births14.2=mutate(births14, weight.z=(weight-mean(weight, na.rm=TRUE))/sd(weight, na.rm=TRUE))
+```
+

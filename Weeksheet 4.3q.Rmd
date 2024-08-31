@@ -1,0 +1,142 @@
+---
+title: "Lab 1"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-09"
+output: html_document
+---
+```{r}
+F=c(37, 39, 46, 56, 66, 76, 82, 79, 72, 62, 51, 42)
+c=c()
+for (i in 1:length (F)){
+  c[i] = (5/9)*(F[i] - 32)
+}
+df=data.frame(F,c)
+df
+
+```
+
+###2
+```{r}
+x=c(2,4,6,8)
+sum=0
+for(i in 1:length(x)){
+  sum=sum+x[i]
+}
+sum
+```
+#3.
+
+```{r}
+
+x=c(2,4,6,8)
+product=1
+for(i in 1:length(x)){
+  product=product*x[i]
+}
+product
+```
+#4.
+```{r}
+
+y= 1:20
+product=1
+for(i in 1:length(y)){
+  product=product*y[i]
+}
+product
+```
+#5.
+```{r}
+f = function(x) {
+  if (x <= 0) {
+    return(-x^3)
+  } else if (  x > 0 & x <= 1 ) {
+    return(x^2)}
+  else {
+    return(x^(1/2))
+  }
+}
+
+
+x = seq(-4, 4, length.out = 100)
+
+
+y = sapply(x, f)
+
+plot(x, y, type = "l", col = "blue", xlab = "x", ylab = "f(x)", 
+     main = "Graph of the function f(x)", axes = FALSE)
+
+
+axis(1)
+axis(2)
+
+
+mtext("x", side = 1, line = 3)
+mtext("f(x)", side = 2, line = 3)
+
+
+```
+
+
+#6
+```{r}
+population =rnorm(25000, mean = 50, sd = 10)
+
+
+mean_n = vector()
+
+
+N = 2500
+for (i in 1:N) {
+  
+  sample_i = sample(population, i)
+  
+  sample_mean = mean(sample_i)
+  
+  mean_n[i] = sample_mean
+}
+
+grid = 1:N
+
+plot(grid, mean_n, type = "l", xlab = "Sample Size", ylab = "Sample Mean", main = "The Weak Law of Large Numbers")
+abline(h=50, col="red")
+
+```
+
+
+
+###while as a looping tool first you need to assign a value and condition it
+```{r}
+n=1
+count=1
+while(n<100){
+  cat("value of n is",n, "n\n")
+  n=n+10
+  cat("This is iteration", count, "\n")
+  count=count+1
+}
+```
+```{r}
+
+loan_amount= 30000
+annual_interest_rate= 0.07
+monthly_payment = 600
+
+
+months = 0
+remaining_balance = loan_amount
+
+
+while (remaining_balance > 0) {
+  interest_this_month = remaining_balance * (annual_interest_rate / 12)
+  remaining_balance = remaining_balance + interest_this_month - monthly_payment
+  months = months + 1
+}
+
+cat("It will take", months, "months to pay off the loan.")
+
+```
+
+
+
+

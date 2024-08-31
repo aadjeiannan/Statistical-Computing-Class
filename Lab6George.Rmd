@@ -1,0 +1,135 @@
+---
+title: "Lab 6"
+author: "George Baffour Awuah"
+date: "2024-04-03"
+output: html_document
+---
+# Part I
+
+## Loading data
+```{r}
+rm(list=ls())
+setwd("/Users/georgebaffourawuah/Desktop/SPRING 2024/COMPUTING/") # set working directory
+data=read.csv("Simulated_Data_Missing_Covariates.csv")
+data
+```
+
+##1.Find the missing percentage of each variable
+```{r}
+percent_missing = colMeans(is.na(data)) * 100
+percent_missing
+```
+
+##2. Use the command na.omit() to find a complete data set, and store ...
+```{r}
+complete_data = na.omit(data)
+complete_data
+```
+
+##3. Use the command ”mice”  and impute the missing values of the original data ...
+```{r}
+library(mice)
+data$X4 = as.factor(data$X4)
+imputed_data = mice(data, m=5, method=c("NULL","mean", "mean", "NULL", "logreg"))
+```
+
+```{r}
+imputed_full_data = complete(imputed_data, 1)
+head(imputed_full_data)
+```
+# Part II
+
+##1. Split the complete data set into a training set and a validation set. Use 80 % ...
+```{r}
+dim(complete_data)
+```
+
+```{r}
+set.seed(123)
+train=sample(1747, 0.8*1747)
+train_data=complete_data[train, ]
+dim(train_data)
+test_data=complete_data[-train, ]
+dim(test_data)
+```
+
+##2. Fit the Naive Bayes Classifier to the training observations
+```{r}
+library(e1071)
+naive_bayes_model= naiveBayes(Y~., data=train_data )
+summary(naive_bayes_model)
+```
+
+##3. Apply this classifier on test set and classify the response Y depending ...
+```{r}
+pred_naive_bayes=predict(naive_bayes_model, newdata=test_data)
+pred_naive_bayes[1:20]
+```
+##4. Construct confusion matrix and compute Accuracy.
+```{r}
+true_response_values = test_data$Y
+
+#confusion matrix
+conf_matrix=table(true_response_values, pred_naive_bayes)
+conf_matrix
+```
+```{r}
+#Computing accuracy from the confusion matrix
+accuracy=sum(diag(conf_matrix))/sum(conf_matrix)
+accuracy
+```
+
+# Part III
+
+## 1. Split the imputed full data set into a training set and a validation set. Use 80...
+```{r}
+dim(imputed_full_data)
+```
+
+```{r}
+set.seed(123)
+train.1=sample(10000, 0.8*10000)
+train_data.1=imputed_full_data[train.1, ]
+dim(train_data.1)
+test_data.1=imputed_full_data[-train.1, ]
+dim(test_data.1)
+```
+
+##2. Fit the Naive Bayes Classifier to the training data
+```{r}
+library(e1071)
+naive_bayes_model.1= naiveBayes(Y~., data=train_data.1 )
+summary(naive_bayes_model.1)
+```
+
+##3. Apply this classifier on test set and classify the response Y depending ...
+```{r}
+pred_naive_bayes.1=predict(naive_bayes_model.1, newdata=test_data.1)
+pred_naive_bayes.1[1:20]
+```
+
+##4. Construct confusion matrix and compute Accuracy.
+```{r}
+true_response_values.1 = test_data.1$Y
+
+#confusion matrix
+conf_matrix.1=table(true_response_values.1, pred_naive_bayes.1)
+conf_matrix.1
+```
+
+```{r}
+#Computing accuracy from the confusion matrix
+accuracy.1=sum(diag(conf_matrix.1))/sum(conf_matrix.1)
+accuracy.1
+```
+
+# Part IV
+
+## Compare your results in part (II) and part(III)
+```{r}
+# complete data: || dim :  1747    5 || accuracy = 0.837||
+# imputed full data: ||dim :10000     5 || accuracy= 0.871 ||
+
+#Comparing performance of the Naive Bayes classifier on the original complete dataset and the dataset with imputed missing values suggests that the imputation improves the model's performance. The accuracy increases from 0.837 to 0.871 after imputation. The improvement is reasonable as there is signficant differences in the complete data (1747) and the  imputed full data (10000). By providing more complete, quality and reliable data, the process of imputation helped to improve the model's performance.
+```
+

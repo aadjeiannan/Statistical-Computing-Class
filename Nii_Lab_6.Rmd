@@ -1,0 +1,52 @@
+---
+title: "Lab 6"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-02"
+output: html_document
+---
+
+
+
+```{r}
+library(readxl)
+# Load the data
+data = read_excel("/Users/nii/Documents/R/R-Class/Rclass/Simulated_Data_Missing_Covariates.xlsx")
+
+# Calculate and print the missing percentage of each variable
+missing_percentage <- sapply(data, function(x) sum(is.na(x)) / length(x) * 100)
+dim(data)
+
+```
+
+
+```{r}
+# Create a complete dataset by omitting NA values
+complete_data <- na.omit(data)
+complete_data
+```
+
+
+
+```{r}
+# Load the mice package
+library(mice)
+
+# Impute missing values
+imputed_data <- mice(data, method = 'pmm', m = 1, maxit = 5)
+imputed_full_data <- complete(imputed_data)
+
+```
+
+```{r}
+# Load necessary library
+
+library(caret)
+
+# Split the complete data
+set.seed(123) # For reproducibility
+splitIndex <- createDataPartition(complete_data$Y, p = .8, list = FALSE, times = 1)
+train_data <- complete_data[splitIndex, ]
+validation_data <- complete_data[-splitIndex, ]
+
+```
+

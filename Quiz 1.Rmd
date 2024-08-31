@@ -1,0 +1,75 @@
+---
+title: "Quiz 1"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-04"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+```{r}
+##creating new data
+flights_data= select(flights, 
+                     dep_time, dep_delay, arr_time, arr_delay)
+flights_data
+write.csv(flights_data, "flights_nyc.csv")
+```
+
+###Problem 1. Find all the flights that Arrived more than two hours late but didn’t leave late.
+```{r}
+more_than_2hrs_late_but_not_late=filter(flights,arr_delay>=120, dep_delay <= 0 )
+more_than_2hrs_late_but_not_late
+```
+
+
+####Problem 2. How many flights have a missing dep_time?
+```{r}
+
+missing_dep_time_count = sum(is.na(flights$dep_time))
+
+
+missing_dep_time_count
+
+
+
+```
+
+##Problem 3. Find the carrier which a highest average departure delay?
+```{r}
+
+average_delay_by_carrier=flights%>%group_by(carrier)%>%summarize(AvgDepartureDelay = mean(dep_delay, na.rm = TRUE))
+
+carrier_with_highest_delay = average_delay_by_carrier%>%filter(AvgDepartureDelay== max(AvgDepartureDelay))
+
+carrier_with_highest_delay
+
+```
+###Problem 4
+##Find the carrier which a lowest average departure delay?
+```{r}
+
+
+average_delay_by_carrier= flights %>% group_by(carrier) %>% summarize(AvgDepartureDelay = mean(dep_delay, na.rm = TRUE))
+
+carrier_with_lowest_delay = average_delay_by_carrier %>% filter(AvgDepartureDelay == min(AvgDepartureDelay))
+
+carrier_with_lowest_delay
+
+
+```
+
+###Problem 5
+###Find the month with the highest average departure delay?
+
+```{r}
+
+average_delay_by_month = flights %>%group_by(month) %>% summarize(AvgDepartureDelay = mean(dep_delay, na.rm = TRUE))
+
+month_with_highest_delay = average_delay_by_month %>% filter(AvgDepartureDelay == max(AvgDepartureDelay))
+
+month_with_highest_delay
+
+
+```
+

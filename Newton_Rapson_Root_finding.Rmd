@@ -1,0 +1,154 @@
+---
+title: "Newton_Rapson"
+author: "Math 5530-4530-Spring 2024"
+date: "2024-04-11"
+output:
+  html_document: default
+  word_document: default
+---
+
+
+### Define the Newton-Rapson method
+
+
+
+```{r}
+newton_rapson=function(ftn,x0,tol=0.000001,max.iter=100){
+  x=x0  ## starting point
+  fx=ftn(x)
+  iter=0
+  while((abs(fx[1])>tol) & (iter <= max.iter)){
+    x=x-fx[1]/fx[2]
+    fx=ftn(x)
+    iter=iter+1
+    cat("At iteration",iter,"value of x is:",x,"\n")
+  }
+  if(abs(fx[1])>tol){
+    cat("Algorithm failed to converge","\n")
+    return(NULL)
+  }else{
+    cat("Algorithm converges  and the root is ", x, "\n")
+    return(x)
+  }
+}
+
+```
+
+
+
+#### Example 1 Lets find the root of  $f(x)=x^3-x-3$
+
+
+```{r}
+my_func1=function(x){
+  fx=x^3-x-3
+  dfx=3*x^2-1
+  return(c(fx,dfx))
+}
+my_func1(1)
+```
+
+### lets plot it
+
+
+```{r}
+x=seq(-5,5,0.001)
+y=x^3-x-3
+plot(x,y,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="")
+xlabel=seq(-5,5,2)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-150,150,50)
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+```
+
+#### Lets use the newton_rapson method
+
+
+```{r}
+newton_rapson(my_func1,2)
+newton_rapson(my_func1,1)
+newton_rapson(my_func1,0)
+```
+
+
+
+
+
+#### Example 2 Lets find the roots of  $f(x)=x^3-7x^2+14x-8$
+
+
+```{r}
+my_func2=function(x){
+  fx=x^3-7*x^2+14*x-8
+  dfx=3*x^2-14*x+14
+  return(c(fx,dfx))
+}
+```
+
+#### Lets plot it
+
+
+```{r}
+x=seq(-2,6,0.001)
+y=x^3-7*x^2+14*x-8
+plot(x,y,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="")
+xlabel=seq(-2,6,1)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-60,60,10)
+ylabel=ylabel[ylabel!=0]
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+```
+
+
+### Lets apply the Newton_Rapson Rule
+
+
+
+````{r}
+newton_rapson(my_func2,1.1)
+newton_rapson(my_func2,1.2)
+newton_rapson(my_func2,1.3)
+newton_rapson(my_func2,1.4)
+newton_rapson(my_func2,1.5)
+newton_rapson(my_func2,1.6)
+newton_rapson(my_func2,1.7)
+newton_rapson(my_func2,1.8)
+
+
+```
+
+
+````{r}
+newton_rapson(my_func2,2.1)
+newton_rapson(my_func2,2.2)
+newton_rapson(my_func2,2.3)
+newton_rapson(my_func2,2.4)
+newton_rapson(my_func2,2.5)
+newton_rapson(my_func2,2.6)
+newton_rapson(my_func2,2.7)
+newton_rapson(my_func2,2.8)
+
+
+```
+
+
+````{r}
+newton_rapson(my_func2,3.1)
+newton_rapson(my_func2,3.2)
+newton_rapson(my_func2,3.3)
+newton_rapson(my_func2,3.4)
+newton_rapson(my_func2,3.5)
+newton_rapson(my_func2,3.6)
+newton_rapson(my_func2,3.7)
+newton_rapson(my_func2,3.8)
+
+
+```
+
+
+
+
+
+$$\\[2 in]$$

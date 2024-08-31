@@ -1,0 +1,44 @@
+---
+title: "Week 7"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-26"
+output: html_document
+---
+
+```{r}
+?cars
+Speed=cars$speed
+Distance=cars$dist
+plot(Speed, Distance, col="purple", pch=19)
+```
+
+
+
+```{r}
+?mtcars
+plot(mtcars$wt, mtcars$mpg, col="red", pch=19)
+x=mtcars$wt ##explanatory variable
+y=mtcars$mpg ###response variable
+ss_xy=sum((x-mean(x))*(y-mean(y)))
+ss_xx=sum((x-mean(x))^2)
+beta1_hat=ss_xy/ss_xx
+beta1_hat
+beta0_hat= mean(y)- beta1_hat*mean(x)
+beta0_hat
+```
+###predictions
+### E(Y | x)=beta0_hat+beta1_hat*x
+#for example x=3.5
+```{r}
+x=3.5
+yhat1=beta0_hat + beta1_hat * x
+yhat1
+```
+
+```{r}
+x=10
+yhat1=beta0_hat + beta1_hat * x
+yhat1
+##the exist the problem of extrapolation since our min and max is 1.513 and 5.5.. the x must be within this range
+```
+

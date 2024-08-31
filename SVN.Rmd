@@ -1,0 +1,38 @@
+---
+title: "SVN"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-17"
+output: html_document
+---
+
+
+```{r}
+titanic=read.csv("titanic.csv")
+names(titanic)
+titanic=titanic[, -3]#remove name
+Sex=ifelse(titanic$Sex=="male",1,0)
+titanic$Sex=Sex ## replace Sex with new variable
+
+```
+
+#Split the data into (70-30)
+
+```{r}
+dim(titanic)
+train=sample(1:887, 0.7*887)
+train_data=titanic[train,]
+test_data=titanic[-train,]     
+```
+
+#load the package
+
+```{r}
+library(e1071)
+```
+
+##Lets fit SVM with linear kernel
+
+```{r}
+svm_linear=svm()
+```
+

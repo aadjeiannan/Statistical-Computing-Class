@@ -1,0 +1,60 @@
+---
+title: "Worksheet 8"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-03-01"
+output: html_document
+---
+
+#part 1
+##theoretical
+
+```{r}
+set.seed(10)
+n=500
+beta0=0.5
+beta1=-1.5
+sigma_2=0.75
+x=runif(n, 2,5)
+eps=rnorm(n, 0, sqrt(sigma_2))
+y=beta0+beta1*x+eps
+ss_xx = sum((x - mean(x))^2)
+ss_xy = sum((x - mean(x)) * (y - mean(y)))
+beta1_hat = ss_xy / ss_xx
+beta1_hat
+beta0_hat = mean(y) - beta1_hat * mean(x)
+beta0_hat
+
+var_beta1_hat=sigma_2/ss_xx
+var_beta1_hat
+```
+
+###simulation
+
+```{r}
+N=10000
+n=500
+beta0=0.5
+beta1=-1.5
+sigma_2=0.75
+x=runif(n, 2,5)
+beta1_hat=vector()
+for (i  in 1:N) {
+eps=rnorm(n, 0, sqrt(sigma_2))
+y=beta0+beta1*x+eps
+ss_xx = sum((x - mean(x))^2)
+ss_xy = sum((x - mean(x)) * (y - mean(y)))
+beta1_hat = ss_xy / ss_xx
+beta1_hat
+beta0_hat = mean(y) - beta1_hat * mean(x)
+beta0_hat}
+```
+
+
+```{r}
+var(beta1_hat)
+mean(beta1_hat)
+hist(beta1_hat)
+```
+
+###Rsqure and Adjusted Rsquare
+###Interaction model

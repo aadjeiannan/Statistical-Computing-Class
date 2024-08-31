@@ -1,0 +1,317 @@
+---
+title: "Optimization"
+author: "Math 5530-4530-Spring 2024"
+date: "2024-04-11"
+output:
+  html_document: default
+  word_document: default
+---
+
+
+
+
+### Newton -Rapson method for finding maximum or minimum value of a function
+
+
+```{r}
+## max
+newton=function(ftn,x0,tol=0.00001,iter.max=100){
+  x=x0;
+  fx=ftn(x);
+  iter=0;
+  while(abs(fx[2])>tol & (iter<iter.max)){
+    x=x-fx[2]/fx[3]
+    fx=ftn(x)
+    iter=iter+1
+    cat("number of iterations is",iter,"\n")
+  }
+  if(iter>=iter.max){
+    cat("Algorithm failed to converge: try again \n")
+    return(NULL)
+  }else{
+    cat("Algorithm converges \n")
+    val=ftn(x)
+    if(val[3]>0){
+      cat("Second derivative is positive. So, the local minimum value is: ",x,"\n")
+      return(x)
+    }else{
+      cat("Second derivative is negative. So, the local maximum value is: ",x,"\n")
+      return(x)
+    }
+  }
+}
+
+
+```
+
+
+
+
+
+### lets find the maximum value of $f(x)= -2x^2 +6x +5.$
+
+#### Lets plot graph of the function and its derivative
+
+
+```{r}
+x=seq(-5,5,0.001)
+y1=-2*x^2+6*x +5
+y2=-4*x +6  ## Derivative
+plot(x,y1,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="")
+xlabel=seq(-5,5,2)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-100,50,10)
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+lines(x,y2,col="purple",lwd=2,lty=4)
+
+```
+
+
+
+```{r}
+x=seq(-5,5,0.001)
+y1=-2*x^2+6*x +5
+y2=-4*x +6  ## Derivative
+par(mfrow=c(1,2))
+plot(x,y1,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="",main="Graph of the function")
+
+xlabel=seq(-5,5,2)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-100,50,10)
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+
+plot(x,y2,type="l",lwd=1.5,lty=6,bty="n",col="purple",xaxt="n",yaxt="n",xlab="",ylab="",main="Graph of the derivative function")
+
+xlabel=seq(-5,5,2)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-100,50,10)
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+
+```
+
+
+### The problem of finding maximum of a function redices to finding roots of its derivative.
+
+
+
+
+
+```{r}
+my_quad1=function(x){
+  fx=-2*x^2+6*x+5
+  dfx=-4*x+6
+  dfx2=-4
+  return(c(fx,dfx,dfx2))
+}
+
+```
+
+
+### Apply Newton_Rapson Method
+
+```{r}
+
+newton(my_quad1,1)
+
+newton(my_quad1,5)
+
+
+```
+
+
+
+### Example 2 Lets find the maximum and minimum of the function $2x^3-15x^2+36x+40$
+
+#### lets plot the function and its derivative first
+
+```{r}
+x=seq(-1,4,0.001)
+y1=2*x^3-15*x^2+36*x+40
+y2=6*x^2 -30*x+36  ## Derivative
+plot(x,y1,type="l",lwd=1.5,lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="")
+xlabel=seq(-1,4,1)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-100,100,10)
+ylabel=ylabel[ylabel!=0]
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+lines(x,y2,col="purple",lwd=2,lty=4)
+legend(2.5,40,legend = c("function","derivative"),col=c("red","purple"),lty=c(5,4),lwd=c(1.5,2),cex=0.8)
+
+```
+
+
+### Apply the Newton_Rapson method
+
+```{r}
+my_quad1=function(x){
+  fx=2*x^3-15*x^2+36*x+40
+  dfx=6*x^2-30*x+36
+  dfx1=12*x-30
+  return(c(fx,dfx,dfx1))
+}
+
+
+```
+
+
+```{r}
+newton(my_quad1,0)
+
+```
+
+
+```{r}
+newton(my_quad1,5)
+
+```
+
+## Golden Section Method for optimization (maximum)
+
+```{r}
+golden_section=function(ftn, xl,xm,xr,tol=0.0000001){
+  ## Check for inputs
+  f.l=ftn(xl);
+  f.m=ftn(xm);
+  f.r=ftn(xr);
+  
+  
+  if(f.l>=f.m){
+    cat("error: f.l>=f.m \n")
+    return(NULL)
+  }
+  
+  if(f.r>=f.m){
+    cat("error:f.r>=f.m \n")
+    return(NULL)
+  }
+  # golden ratio plus one
+  gr1 <- 1 + (1 + sqrt(5))/2;
+  
+  while(xr-xl>tol){
+    if((xr-xm)>(xm-xl)){
+      y=xm+(xr-xm)/gr1
+      f.y=ftn(y)
+      if(f.y>=f.m){
+        xl=xm
+        xm=y
+        f.l=f.m
+        f.m=f.y
+      }else{
+        xr=y
+        xm=y
+        f.r=f.y
+      }
+    }else{
+      y=xm-(xm-xl)/gr1
+      f.y=ftn(y)
+      if(f.y>=f.m){
+        xr=xm
+        f.r=f.m
+        xm=y
+        f.m=f.y
+      }else{
+        xl=y
+        f.l=f.y
+      }
+    }
+  }
+  cat("The function has maximum value at",xm,"\n")
+  return(xm)
+}
+
+
+```
+
+
+#### Example 1: find the maximum of $-2x^2+6x+5$
+
+```{r}
+my_quad=function(x){
+  fx=-2*x^2+6*x+5
+  return(fx)
+}
+
+```
+
+
+```{r}
+golden_section(my_quad,0,1,3)
+
+```
+
+###  Use the golden-section search algorithm to find all of the local maxima of the function 
+$f(x)= 0$ if $x=0$
+
+$f(x)= |x|\;\;log(\frac{|x|}{2})\;\;e^{-|x|}$ , otherwise
+
+
+#### Lets plot the function first
+
+
+```{r}
+my_func3=function(x){
+  y=vector()
+  for ( i in 1:length(x))
+  if (x[i] ==0){
+    y[i]=0
+  }else{
+    y[i]= abs(x[i])*log(abs(x[i])/2)*exp(-abs(x[i]))
+  }
+  return(y)
+}
+my_func3(0.5)
+```
+
+
+
+
+
+```{r}
+x=seq(-10,10,0.001)
+y=my_func3(x)
+plot(x,y,type="l",lty=5,bty="n",col="red",xaxt="n",yaxt="n",xlab="",ylab="",main="Graph of the function")
+
+xlabel=seq(-10,10,1)
+xlabel=xlabel[xlabel!=0]
+ylabel=seq(-1,0.2,0.05)
+ylabel=ylabel[ylabel!=0]
+axis(1,xlabel,pos=0,lwd=1.5,col="dodgerblue")
+axis(2,ylabel,pos=0,lwd=1.8,col="blue")
+
+
+```
+
+
+
+```{r}
+golden_section(my_func3,2.1,2.3,5)
+my_func3(3.170464)
+```
+
+
+
+
+
+
+$$\\[2 in]$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,170 @@
+---
+title: "Lab 3"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-02-16"
+output: html_document
+---
+##Task 1
+```{r}
+
+f = function(r, n) {
+  sum = 0
+  for (i in 0:n) {
+    sum = sum + r^i
+  }
+  return(sum)
+}
+
+
+r1 = 2
+n1 = 10
+
+print(f(r1,n1))
+
+r2=3
+n2=12
+
+print(f(r2,n2))
+```
+
+###Task 2
+
+```{r}
+f = function(x) {
+  n = length(x)
+  
+  sum_x = 0
+  for (i in 1:n) {
+    sum_x = sum_x + x[i]
+  }
+  am = sum_x / n
+  
+  prod_x = 1
+  for (i in 1:n) {
+    prod_x = prod_x * x[i]
+  }
+  gm = prod_x^(1/n)
+  
+  sum_inv_x = 0
+  for (i in 1:n) {
+    sum_inv_x = sum_inv_x + 1 / x[i]
+  }
+  hm = n / sum_inv_x
+  
+  return(list(AM = am,  GM = gm,  HM = hm))
+}
+
+x = c(1.4, 1.6, 1.6, 2.0, 2.0, 2.2, 2.4, 2.6)
+
+results = f(x)
+print(results$GM)  
+print(results$HM) 
+
+```
+
+#Task 3
+
+```{r}
+sample_var = function(x) {
+  n = length(x)
+  sum_x = 0
+  sum_squared_diff = 0
+  
+  for (i in 1:n) {
+    sum_x = sum_x + x[i]
+  }
+  
+  x_bar = sum_x / n
+  
+  for (i in 1:n) {
+    sum_squared_diff = sum_squared_diff + (x[i] - x_bar)^2
+  }
+  
+  sample_variance = sum_squared_diff / (n - 1)
+  
+  return(sample_variance)
+}
+
+
+x = c(1.4, 1.6, 1.6, 2.0, 2.0, 2.2, 2.4, 2.6)
+y = c(180, 184, 190, 220, 186, 215, 205, 240)
+print(sample_var(x))
+print(sample_var(y))
+
+
+```
+##Task 4
+
+```{r}
+
+correlation_coefficient = function(x, y) {
+  sum_x = sum_y = sum_diff_xy = sum_diff_xsqr = sum_diff_ysqr = 0
+  length_x = length(x)
+  length_y = length(y)
+  
+  for (i in 1:min(length_x, length_y)) {
+    sum_x = sum_x + x[i]
+    sum_y = sum_y + y[i]
+  }
+  
+  mean_x = sum_x / length_x
+  mean_y = sum_y / length_y
+  
+  for (i in 1:min(length_x, length_y)) {
+    diff_xy = (x[i] - mean_x) * (y[i] - mean_y)
+    diff_xsqr = (x[i] - mean_x)^2
+    diff_ysqr = (y[i] - mean_y)^2
+    
+    sum_diff_xy = sum_diff_xy + diff_xy
+    sum_diff_xsqr = sum_diff_xsqr + diff_xsqr
+    sum_diff_ysqr = sum_diff_ysqr + diff_ysqr
+  }
+  
+  prod_diff_xy_sqr = sum_diff_xsqr * sum_diff_ysqr
+
+  corr = sum_diff_xy / (prod_diff_xy_sqr)^0.5
+  
+  return(corr)
+}
+
+x = c(1.4, 1.6, 1.6, 2.0, 2.0, 2.2, 2.4, 2.6)
+y = c(180, 184, 190, 220, 186, 215, 205, 240)
+
+correlation = correlation_coefficient(x, y)
+print(correlation)
+
+```
+###Task 5
+```{r}
+f = function(x) {
+  max_ = x[1]
+  min_ = x[1]
+  
+  for (i in 2:length(x)) {
+    if (x[i] > max_) {
+      max_ = x[i]
+    }
+    if (x[i] < min_) {
+      min_ = x[i]
+    }
+  }
+  
+  return(c(max_, min_))
+}
+
+
+x = c(1.4, 1.6, 1.6, 2.0, 2.0, 2.2, 2.4, 2.6)
+y = c(180, 184, 190, 220, 186, 215, 205, 240)
+
+
+result_x = f(x)
+print(result_x[1])  
+print(result_x[2]) 
+
+
+result_y = f(y)
+print(result_y[1])  
+print(result_y[2])  
+
+```
+

@@ -1,0 +1,100 @@
+---
+title: "R graphical"
+author: "Nii"
+date: "2024-02-02"
+output: html_document
+---
+
+##plot with base r
+
+# plot of $y=x^2$
+
+```{r}
+?
+```
+
+
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4)
+```
+
+
+###drawing a vertical line
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4)
+abline(v=0)
+```
+
+###drawing a horizontal line
+
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4)
+abline(h=0)
+```
+
+
+###drawing a vertical and horizontal line
+
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4)
+abline(v= 2, h=2)
+```
+
+
+###drawing a vertical and horizontal line in different colours
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4)
+abline(v=0, col="pink")
+abline(h=0, col="green")
+
+```
+
+
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4, main="graph of y=x^2",xlab="", ylab="", xlim=c(-3,3), ylim=c(-5,5))
+abline(v= 0, col="pink", lwd=4)
+abline(h= 0, col="green", lwd=4)
+```
+
+
+### i dont want the box...  xaxt="n" also removes x axis
+```{r}
+x=seq(-2,2,.001)
+y=x*x
+plot(x, y,type="l", col="red",lwd=2, lty=4, bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(-2,5), xlim=c(-3,3))
+seq1=seq(-3, 3, 0.5)
+seq2=seq(-5, 5, 1)
+
+axis(1, at=seq1, pos=0)###xaxis
+axis(2, at=seq2, pos=0)
+```
+
+###plot of $$y=2*x+1, $y=frac{x-1}{2}$ $y=x$
+```{r}
+x=seq(-2,2,.001)
+y1=2*x+1
+plot(x, y1,type="l", col="red",lwd=2, lty=4, bty="n", xaxt="n", yaxt="n", xlab="", ylab="", ylim=c(-2,5), xlim=c(-3,3))
+seq1=seq(-3, 3, 0.5)
+seq2=seq(-5, 5, 1)
+
+axis(1, at=seq1, pos=0)###xaxis_x=1
+axis(2, at=seq2, pos=0)###yaxxis_y=2
+y2=(x-1)/2
+lines(x,y2, col="purple", lty=3)
+y=x
+lines(x, y, col="green", lwd=2)
+legend(-2, 4, legend=c(" y=2x+1","y=x", "y=(x-1)/2"), col=c("red","green", "purple"),lwd=c(2,2,3), lty=c(4,3,5))
+```
+h

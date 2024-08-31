@@ -1,0 +1,152 @@
+---
+title: "Lab 8"
+author: "Nii Adjetey Adjei-Annan"
+date: "2024-04-12"
+output: html_document
+---
+
+
+#Defining function $fx=2*x^4+20*x^3-6*x^2+15*x-30.$
+
+```{r}
+# Define the function and its derivative of Newton-Rapson method
+my_new_func1 <- function(x) {
+  fx = 2 * x^4 + 20 * x^3 - 6 * x^2 + 15 * x - 30
+  dfx = 8 * x^3 + 60 * x^2 - 12 * x + 15
+  return(c(fx, dfx))  # Return both f(x) and f'(x)
+}
+
+# Defining the  function for Bisection method
+my_function = function(x) {
+  2 * x^4 + 20 * x^3 - 6 * x^2 + 15 * x - 30
+}
+
+```
+
+
+
+#Plotting the function $fx=2*x^4+20*x^3-6*x^2+15*x-30$ for inspection
+```{r}
+# Plotting the function for inspection
+x = seq(-12, 5, 0.000011)
+y = my_function(x)
+plot(x, y, type = "l", lty = 5, bty = "n", col = "red", xaxt = "n", yaxt = "n", xlab = "", ylab = "")
+xlabel = seq(-15, 6, 2)
+xlabel = xlabel[xlabel != 0]
+ylabel = seq(-4000, 4000, 500)
+axis(1, at = xlabel, pos = 0, lwd = 1.5, col = "dodgerblue")
+axis(2, at = ylabel, pos = 0, lwd = 1.8, col = "blue")
+
+```
+
+
+
+#1.Newton-Rapson method for $fx=2*x^4+20*x^3-6*x^2+15*x-30.$
+```{r}
+newton_raphson <- function(ftn, x0, tol = 1e-11, max.iter = 100) {
+  x <- x0  # Starting point
+  fx <- ftn(x)
+  iter <- 0
+  while (abs(fx[1]) > tol && iter <= max.iter) {
+    x <- x - fx[1] / fx[2]  
+    fx <- ftn(x)
+    iter <- iter + 1
+    cat("At iteration", iter, "value of x is:", x, "\n")
+  }
+  if (abs(fx[1]) > tol) {
+    cat("Algorithm failed to converge", "\n")
+    return(NULL)
+  } else {
+    cat("Algorithm converges and the root is", x, "\n")
+    return(x)
+  }
+}
+
+# Testing the Newton-Raphson method on two initial guesses
+root1 <- newton_raphson(my_new_func1, 2)  
+root2 <- newton_raphson(my_new_func1, -11) 
+
+```
+
+
+
+
+#2. Bisection rule for $fx=2*x^4+20*x^3-6*x^2+15*x-30$.
+
+```{r}
+bisection = function(ftn, x.l, x.r, tol = 0.0001) {
+  if (x.l >= x.r) {
+    cat("Error: Left point is greater than the right point \n")
+    return(NULL)
+  }
+  
+  f.l = ftn(x.l)
+  f.r = ftn(x.r)
+  
+  if (f.l == 0) {
+    return(x.l)
+  } else if (f.r == 0) {
+    return(x.r)
+  } else if (f.l * f.r > 0) {
+    cat("Error: The points are on the same side of the root. \n")
+    return(NULL)
+  }
+  
+  iter = 0
+  while ((x.r - x.l) > tol) {
+    x.m = (x.l + x.r) / 2
+    f.m = ftn(x.m)
+    
+    if (f.m == 0) {
+      return(x.m)
+    } else if (f.l * f.m < 0) {
+      x.r = x.m
+      f.r = f.m
+    } else {
+      x.l = x.m
+      f.l = f.m
+    }
+    
+    iter = iter + 1
+    cat("At iteration", iter, "left point is", x.l, "right point is", x.r, "\n")
+  }
+  
+  root = (x.l + x.r) / 2
+  cat("One root of the function is", root, "\n")
+  return(root)
+}
+
+# Finding intervals where the function changes sign
+find_sign_change_intervals = function(f, from, to, step) {
+  x_vals = seq(from, to, step)
+  f_vals = sapply(x_vals, f)
+  signs = sign(f_vals)
+  changes = which(diff(signs) != 0)
+  intervals = cbind(x_vals[changes], x_vals[changes + 1])
+  return(intervals)
+}
+
+# Using find_sign_change_intervals to identify suitable intervals for the bisection method
+intervals = find_sign_change_intervals(my_function, -12, 5, 0.1)
+cat("Checking intervals for roots...\n")
+if (nrow(intervals) > 0) {
+  root1 = bisection(my_function, intervals[1, 1], intervals[1, 2])
+  root2 = ifelse(nrow(intervals) > 1, bisection(my_function, intervals[2, 1], intervals[2, 2]), NA)
+  cat("The found roots are:", root1, "and", root2, "\n")
+} else {
+  cat("No intervals with sign changes found.\n")
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
